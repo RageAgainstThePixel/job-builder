@@ -1,8 +1,18 @@
-name: github-action-template
-description: 'A GitHub Actions template repository for TypeScript based Actions'
-# inputs:
-# outputs:
+name: job-builder
+description: 'A GitHub action to setup job matrixes for complex job workflows'
+inputs:
+  build-options:
+    description: 'The path to the build options JSON file.'
+    required: true
+  group-by:
+    description: 'The property to group jobs by. Defaults to the first property in the build options object.'
+    required: false
+  job-name-prefix:
+    description: 'The prefix to use for job names. Defaults to empty string.'
+    required: false
+outputs:
+  jobs:
+    description: 'The JSON string of the job matrix.'
 runs:
   using: 'node20'
   main: 'dist/index.js'
-  #post: 'dist/index.js'
