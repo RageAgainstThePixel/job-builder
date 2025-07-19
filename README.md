@@ -29,7 +29,7 @@ jobs:
       - uses: RageAgainstThePixel/job-builder@v1
         id: job-builder
         with:
-          build-options.json: 'path/to/build-options.json'
+          build-options: 'path/to/build-options.json'
           group-by: 'os' # Optional, defaults to the first property in the build options object
         job-name-prefix: 'Build' # Optional, defaults to empty string
     outputs:
@@ -49,7 +49,7 @@ jobs:
 
 | name | description | required |
 | ---- | ----------- | -------- |
-| `build-options.json` | The path to the build options JSON file. | true |
+| `build-options` | The path to the build options JSON file. | true |
 | `group-by` | The property to group jobs by. Defaults to the first property in the build options object. | false |
 | `job-name-prefix` | The prefix to use for job names. Defaults to empty string. | false |
 
@@ -57,7 +57,7 @@ jobs:
 
 - `jobs`: The JSON string of the job matrix.
 
-### build options json output example
+#### build options json output example
 
 ```json
 {
@@ -71,7 +71,7 @@ jobs:
             "os": "windows-latest",
             "build-target": "WSAPlayer",
             "unity-version": "6000.0.49f1 (840e0a9776d9)",
-            ... // other custom properties
+            ... // other custom properties defined in the build options
           },
           ...
           {
@@ -79,7 +79,7 @@ jobs:
             "os": "windows-latest",
             "build-target": "WindowsStandalone64",
             "unity-version": "6000.0.49f1 (840e0a9776d9)",
-            ... // other custom properties
+            ... // other custom properties defined in the build options
           }
         ]
       }
