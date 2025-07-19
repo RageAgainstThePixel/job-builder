@@ -1,15 +1,15 @@
 {
+  "os": [
+    "windows-latest",
+    "macos-latest",
+    "ubuntu-latest"
+  ],
   "unity-version": [
     "2019.x",
     "2020.x",
     "2021.x",
     "6000.0.49f1 (840e0a9776d9)",
     "6000.1.x"
-  ],
-  "os": [
-    "windows-latest",
-    "macos-latest",
-    "ubuntu-latest"
   ],
   "build-target": [
     "WSAPlayer"
