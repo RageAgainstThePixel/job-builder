@@ -27584,7 +27584,7 @@ function generateJobs() {
     const exclude = buildOptions.exclude || [];
     const jobs = {};
     const groupBy = core.getInput('group-by') || props[0];
-    core.startGroup(`Generating jobs for property: ${groupBy}`);
+    core.startGroup(`Generating jobs for group: ${groupBy}`);
     try {
         for (const combination of combinations) {
             const job = {
@@ -27595,7 +27595,7 @@ function generateJobs() {
                 ...combination,
             };
             if (matchesExclusion(job, exclude)) {
-                core.info(`Excluding job: ${JSON.stringify(job)}`);
+                core.debug(`Excluding job: ${JSON.stringify(job)}`);
                 continue;
             }
             const group = combination[groupBy];
