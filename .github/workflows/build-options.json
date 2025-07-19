@@ -1,8 +1,6 @@
 {
   "os": [
-    "windows-latest",
-    "macos-latest",
-    "ubuntu-latest"
+    "windows-latest"
   ],
   "unity-version": [
     "2019.x",
