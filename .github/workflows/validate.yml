@@ -13,8 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          sparse-checkout: .github/
       - name: Setup Jobs
         id: setup-jobs
         uses: ./ # RageAgainstThePixel/job-builder
