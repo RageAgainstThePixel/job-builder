@@ -11,6 +11,8 @@ concurrency:
 jobs:
   setup:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - name: Setup Jobs
@@ -25,10 +27,12 @@ jobs:
   validate:
     if: ${{ needs.setup.outputs.jobs }}
     needs: setup
-    uses: ./.github/workflows/build.yml
     name: ${{ matrix.jobs.name }}
+    secrets: inherit
+    permissions:
+      contents: read
     strategy:
       matrix: ${{ fromJSON(needs.setup.outputs.jobs) }}
-    secrets: inherit
+    uses: ./.github/workflows/build.yml
     with:
       matrix: ${{ toJSON(matrix.jobs.matrix) }}
