@@ -17,8 +17,11 @@ jobs:
           sparse-checkout: .github/
       - name: Setup Jobs
         id: setup-jobs
-        shell: bash
-        run: ./.github/workflows/scripts/setup-matrix.sh
+        uses: ./ # RageAgainstThePixel/job-builder
+        with:
+          build-options: ./.github/workflows/build-options.json
+          group-by: 'unity-version' # Optional, defaults to the first property in the build options object
+          job-name-prefix: 'Build' # Optional, defaults to empty string
     outputs:
       jobs: ${{ steps.setup-jobs.outputs.jobs }}
   validate:
