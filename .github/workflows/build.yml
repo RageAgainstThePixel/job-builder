@@ -1,0 +1,20 @@
+name: build
+permissions:
+  contents: read
+on:
+  workflow_call:
+    inputs:
+      matrix:
+        required: true
+        type: string
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    strategy:
+      matrix: ${{ fromJSON(inputs.matrix) }}
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    steps:
+      - run: echo "Running build for ${{ matrix.name }}"

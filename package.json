@@ -1,27 +1,27 @@
 {
-  "name": "github-action-template",
+  "name": "job-builder",
   "version": "1.0.0",
-  "description": "A GitHub Actions template repository for TypeScript based Actions.",
+  "description": "A GitHub action to setup job matrixes for complex job workflows.",
   "author": "RageAgainstThePixel",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RageAgainstThePixel/github-action-template.git"
+    "url": "git+https://github.com/RageAgainstThePixel/job-builder.git"
   },
   "bugs": {
-    "url": "https://github.com/RageAgainstThePixel/github-action-template/issues"
+    "url": "https://github.com/RageAgainstThePixel/job-builder/issues"
   },
-  "homepage": "https://github.com/RageAgainstThePixel/github-action-template",
+  "homepage": "https://github.com/RageAgainstThePixel/job-builder",
   "main": "dist/index.js",
   "keywords": [],
   "dependencies": {
-    "@actions/core": "^1.10.1"
+    "@actions/core": "^1.11.1"
   },
   "devDependencies": {
-    "@types/node": "^22.2.0",
+    "@types/node": "^22.16.5",
     "@vercel/ncc": "^0.34.0",
     "shx": "^0.3.4",
-    "typescript": "^5.5.4"
+    "typescript": "^5.8.3"
   },
   "scripts": {
     "build": "npm run clean && npm run bundle",
