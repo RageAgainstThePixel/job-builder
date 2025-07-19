@@ -27588,7 +27588,10 @@ function generateJobs() {
     try {
         for (const combination of combinations) {
             const job = {
-                name: props.filter(p => p !== groupBy).map(p => combination[p]).join(' '),
+                name: props
+                    .filter(p => p !== groupBy && values[p].length > 1)
+                    .map(p => combination[p])
+                    .join(' '),
                 ...combination,
             };
             if (matchesExclusion(job, exclude)) {
