@@ -17,5 +17,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - run: echo "Running build for ${{ matrix.name }}"
+      - run: echo "Running build for ${MATRIX_NAME}"
         shell: bash
+        env:
+          MATRIX_NAME: ${{ matrix.name }}
