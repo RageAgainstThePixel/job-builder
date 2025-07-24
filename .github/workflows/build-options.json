@@ -2,6 +2,9 @@
   "os": [
     "windows-latest"
   ],
+  "unity-version": [
+    "6000.0.49f1 (840e0a9776d9)"
+  ],
   "uwp-arch": [
     "x64",
     "ARM64"
@@ -19,7 +22,8 @@
     "custom"
   ],
   "windows-sdk-version": [
-    "10.0.22621.0"
+    "10.0.22621.0",
+    "10.0.26100.0"
   ],
   "exclude": [
     {
@@ -38,8 +42,7 @@
   "include": [
     {
       "os": "windows-latest",
-      "build-target": "WSAPlayer",
-      "unity-version": "6000.0.49f1 (840e0a9776d9)"
+      "build-target": "WSAPlayer"
     }
   ]
 }
