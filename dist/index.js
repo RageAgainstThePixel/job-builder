@@ -27615,27 +27615,6 @@ function generateJobs() {
             }
             jobs[group].push(job);
         }
-        if (buildOptions.include) {
-            const includeArr = Array.isArray(buildOptions.include)
-                ? buildOptions.include
-                : [buildOptions.include];
-            for (const obj of includeArr) {
-                if (typeof obj === 'object' && obj !== null) {
-                    const group = obj[groupBy] || 'include';
-                    const match = combinations.find(e => Object.keys(obj).every(k => e[k] === obj[k]));
-                    let job = match ? { ...match, ...obj } : { ...obj };
-                    if (!('name' in job)) {
-                        job.name = Object.values(job).join(' ');
-                    }
-                    if (!matchesExclusion(job, exclude)) {
-                        if (!jobs[group]) {
-                            jobs[group] = [];
-                        }
-                        jobs[group].push(job);
-                    }
-                }
-            }
-        }
     }
     finally {
         core.endGroup();

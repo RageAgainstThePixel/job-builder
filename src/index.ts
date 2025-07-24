@@ -37,9 +37,7 @@ function generateJobs(): void {
   const groupBy: string = core.getInput('group-by') || props[0];
   core.startGroup(`Generating jobs for group: ${groupBy}`);
   try {
-    // 1. Add all matrix combinations except excluded
     for (const combination of combinations) {
-      // Merge matching include entry properties (by os) into the job
       let includeProps = {};
       if (buildOptions.include) {
         const includeArr = Array.isArray(buildOptions.include)
@@ -67,30 +65,6 @@ function generateJobs(): void {
         jobs[group] = [];
       }
       jobs[group].push(job);
-    }
-    // 2. Add each include object as a separate job
-    if (buildOptions.include) {
-      const includeArr = Array.isArray(buildOptions.include)
-        ? buildOptions.include
-        : [buildOptions.include];
-      for (const obj of includeArr) {
-        if (typeof obj === 'object' && obj !== null) {
-          const group = obj[groupBy] || 'include';
-          // Find a matrix combination that matches all shared keys in obj
-          const match = combinations.find(e => Object.keys(obj).every(k => e[k] === obj[k]));
-          // Fill in missing properties from the match
-          let job = match ? { ...match, ...obj } : { ...obj };
-          if (!('name' in job)) {
-            job.name = Object.values(job).join(' ');
-          }
-          if (!matchesExclusion(job, exclude)) {
-            if (!jobs[group]) {
-              jobs[group] = [];
-            }
-            jobs[group].push(job);
-          }
-        }
-      }
     }
   } finally {
     core.endGroup();
