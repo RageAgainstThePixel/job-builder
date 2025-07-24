@@ -27597,11 +27597,19 @@ function generateJobs() {
                     includeProps = { ...match };
                 }
             }
+            let jobName = props
+                .filter(p => p !== groupBy && values[p].length > 1)
+                .map(p => combination[p])
+                .join(' ');
+            if (jobName === combination.os && Object.keys(includeProps).length > 0) {
+                const includeKeys = Object.keys(includeProps);
+                jobName = includeKeys
+                    .filter(k => k !== groupBy)
+                    .map(k => includeKeys[k])
+                    .join(' ');
+            }
             const job = {
-                name: props
-                    .filter(p => p !== groupBy && values[p].length > 1)
-                    .map(p => combination[p])
-                    .join(' '),
+                name: jobName,
                 ...combination,
                 ...includeProps,
             };
