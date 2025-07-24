@@ -64,14 +64,10 @@ function generateJobs(): void {
       for (const obj of includeArr) {
         if (typeof obj === 'object' && obj !== null) {
           const group = obj[groupBy] || 'include';
-          const job = {
-            name: props
-              .filter(p => p !== groupBy && values[p].length > 1)
-              .map(p => obj[p] ?? '')
-              .filter(Boolean)
-              .join(' '),
-            ...obj,
-          };
+          let job = { ...obj };
+          if (!('name' in job)) {
+            job.name = Object.values(obj).join(' ');
+          }
           if (!matchesExclusion(job, exclude)) {
             if (!jobs[group]) {
               jobs[group] = [];
