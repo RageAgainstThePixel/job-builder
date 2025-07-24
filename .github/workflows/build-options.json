@@ -1,6 +1,8 @@
 {
   "os": [
-    "windows-latest"
+    "ubuntu-latest",
+    "windows-latest",
+    "macos-latest"
   ],
   "unity-version": [
     "2019.x",
@@ -9,39 +11,18 @@
     "6000.0.49f1 (840e0a9776d9)",
     "6000.1.x"
   ],
-  "uwp-arch": [
-    "x64",
-    "ARM64"
-  ],
-  "uwp-subtarget": [
-    "PC",
-    "HoloLens"
-  ],
-  "uwp-package-type": [
-    "sideload",
-    "upload"
-  ],
-  "certificate-type": [
-    "default",
-    "custom"
-  ],
-  "exclude": [
-    {
-      "uwp-package-type": "upload",
-      "certificate-type": "custom"
-    },
-    {
-      "uwp-subtarget": "PC",
-      "uwp-arch": "ARM64"
-    },
-    {
-      "uwp-subtarget": "HoloLens",
-      "uwp-arch": "x64"
-    }
-  ],
   "include": [
     {
-      "build-target": "WSAPlayer"
+      "os": "ubuntu-latest",
+      "build-target": "StandaloneLinux64"
+    },
+    {
+      "os": "windows-latest",
+      "build-target": "StandaloneWindows64"
+    },
+    {
+      "os": "macos-latest",
+      "build-target": "StandaloneOSX"
     }
   ]
 }
