@@ -18,3 +18,4 @@ jobs:
       contents: read
     steps:
       - run: echo "Running build for ${{ matrix.name }}"
+        shell: bash
