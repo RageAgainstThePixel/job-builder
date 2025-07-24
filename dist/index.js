@@ -27609,7 +27609,13 @@ function generateJobs() {
                 core.debug(`Excluding job: ${JSON.stringify(job)}`);
                 continue;
             }
-            const group = combination[groupBy];
+            let group = combination[groupBy];
+            if (group === undefined && includeProps && includeProps[groupBy]) {
+                group = includeProps[groupBy];
+            }
+            if (group === undefined) {
+                throw new Error(`Group '${groupBy}' is undefined for job: ${JSON.stringify(job)}`);
+            }
             if (!jobs[group]) {
                 jobs[group] = [];
             }
