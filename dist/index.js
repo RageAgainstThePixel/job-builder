@@ -27587,12 +27587,23 @@ function generateJobs() {
     core.startGroup(`Generating jobs for group: ${groupBy}`);
     try {
         for (const combination of combinations) {
+            let includeProps = {};
+            if (buildOptions.include) {
+                const includeArr = Array.isArray(buildOptions.include)
+                    ? buildOptions.include
+                    : [buildOptions.include];
+                const match = includeArr.find(e => typeof e === 'object' && e !== null && e.os === combination.os);
+                if (match) {
+                    includeProps = { ...match };
+                }
+            }
             const job = {
                 name: props
                     .filter(p => p !== groupBy && values[p].length > 1)
                     .map(p => combination[p])
                     .join(' '),
                 ...combination,
+                ...includeProps,
             };
             if (matchesExclusion(job, exclude)) {
                 core.debug(`Excluding job: ${JSON.stringify(job)}`);
