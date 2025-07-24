@@ -33,7 +33,7 @@ jobs:
       contents: read
     strategy:
       matrix: ${{ fromJSON(needs.setup.outputs.jobs) }}
-      max-parallel: 1
+      fail-fast: false
     uses: ./.github/workflows/build.yml
     with:
       matrix: ${{ toJSON(matrix.jobs.matrix) }}
