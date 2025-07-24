@@ -4,13 +4,9 @@
   ],
   "unity-version": [
     "2019.x",
-    "2020.x",
-    "2021.x",
+    "2022.3.x",
     "6000.0.49f1 (840e0a9776d9)",
     "6000.1.x"
-  ],
-  "build-target": [
-    "WSAPlayer"
   ],
   "uwp-arch": [
     "x64",
@@ -28,6 +24,10 @@
     "default",
     "custom"
   ],
+  "windows-sdk-version": [
+    "10.0.22621.0",
+    "10.0.26100.0"
+  ],
   "exclude": [
     {
       "uwp-package-type": "upload",
@@ -40,6 +40,12 @@
     {
       "uwp-subtarget": "HoloLens",
       "uwp-arch": "x64"
+    }
+  ],
+  "include": [
+    {
+      "os": "windows-latest",
+      "build-target": "WSAPlayer"
     }
   ]
 }

@@ -27575,30 +27575,52 @@ main();
 function generateJobs() {
     const buildOptionsInputPath = core.getInput('build-options', { required: true });
     const buildOptions = JSON.parse(fs.readFileSync(buildOptionsInputPath, 'utf8'));
-    const props = Object.keys(buildOptions).filter(key => key !== 'exclude' && Array.isArray(buildOptions[key]));
+    const props = Object.keys(buildOptions).filter(key => key !== 'exclude' && key !== 'include' && Array.isArray(buildOptions[key]));
     const values = {};
     for (const p of props) {
         values[p] = buildOptions[p];
     }
     const combinations = getCombinations(props, values);
-    const exclude = buildOptions.exclude || [];
+    const exclude = Array.isArray(buildOptions.exclude) ? buildOptions.exclude : (buildOptions.exclude ? [buildOptions.exclude] : []);
     const jobs = {};
     const groupBy = core.getInput('group-by') || props[0];
     core.startGroup(`Generating jobs for group: ${groupBy}`);
     try {
         for (const combination of combinations) {
+            let includeProps = {};
+            if (buildOptions.include) {
+                const includeArr = Array.isArray(buildOptions.include)
+                    ? buildOptions.include
+                    : [buildOptions.include];
+                const match = includeArr.find(e => typeof e === 'object' && e !== null && e.os === combination.os);
+                if (match) {
+                    includeProps = { ...match };
+                }
+            }
+            let jobName = props
+                .filter(p => p !== groupBy && values[p].length > 1)
+                .map(p => combination[p])
+                .join(' ');
+            const includeKeys = Object.keys(includeProps);
+            if (jobName === combination.os && includeKeys.length > 0) {
+                jobName = `${includeKeys.map(k => `${includeProps[k]}`).join(' ')}`;
+            }
             const job = {
-                name: props
-                    .filter(p => p !== groupBy && values[p].length > 1)
-                    .map(p => combination[p])
-                    .join(' '),
+                name: jobName,
                 ...combination,
+                ...includeProps,
             };
             if (matchesExclusion(job, exclude)) {
                 core.debug(`Excluding job: ${JSON.stringify(job)}`);
                 continue;
             }
-            const group = combination[groupBy];
+            let group = combination[groupBy];
+            if (group === undefined && includeProps && includeProps[groupBy]) {
+                group = includeProps[groupBy];
+            }
+            if (group === undefined) {
+                throw new Error(`Group '${groupBy}' is undefined for job: ${JSON.stringify(job)}`);
+            }
             if (!jobs[group]) {
                 jobs[group] = [];
             }
