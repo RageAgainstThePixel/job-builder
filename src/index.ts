@@ -33,23 +33,11 @@ function generateJobs(): void {
   }
   const combinations: Array<Record<string, string>> = getCombinations(props, values);
   const exclude: Array<Record<string, string>> = Array.isArray(buildOptions.exclude) ? buildOptions.exclude : (buildOptions.exclude ? [buildOptions.exclude] : []);
-  let includeObj: Record<string, string> = {};
-  if (buildOptions.include) {
-    if (Array.isArray(buildOptions.include)) {
-      // Merge all objects in the array, last wins on key conflict
-      for (const obj of buildOptions.include) {
-        if (typeof obj === 'object' && obj !== null) {
-          includeObj = { ...includeObj, ...obj };
-        }
-      }
-    } else if (typeof buildOptions.include === 'object' && buildOptions.include !== null) {
-      includeObj = buildOptions.include;
-    }
-  }
   const jobs: Record<string, any[]> = {};
   const groupBy: string = core.getInput('group-by') || props[0];
   core.startGroup(`Generating jobs for group: ${groupBy}`);
   try {
+    // 1. Add all matrix combinations except excluded
     for (const combination of combinations) {
       const job = {
         name: props
@@ -57,8 +45,7 @@ function generateJobs(): void {
           .map(p => combination[p])
           .join(' '),
         ...combination,
-        ...includeObj,
-      }
+      };
       if (matchesExclusion(job, exclude)) {
         core.debug(`Excluding job: ${JSON.stringify(job)}`);
         continue;
@@ -68,6 +55,31 @@ function generateJobs(): void {
         jobs[group] = [];
       }
       jobs[group].push(job);
+    }
+    // 2. Add each include object as a separate job
+    if (buildOptions.include) {
+      const includeArr = Array.isArray(buildOptions.include)
+        ? buildOptions.include
+        : [buildOptions.include];
+      for (const obj of includeArr) {
+        if (typeof obj === 'object' && obj !== null) {
+          const group = obj[groupBy] || 'include';
+          const job = {
+            name: props
+              .filter(p => p !== groupBy && values[p].length > 1)
+              .map(p => obj[p] ?? '')
+              .filter(Boolean)
+              .join(' '),
+            ...obj,
+          };
+          if (!matchesExclusion(job, exclude)) {
+            if (!jobs[group]) {
+              jobs[group] = [];
+            }
+            jobs[group].push(job);
+          }
+        }
+      }
     }
   } finally {
     core.endGroup();
