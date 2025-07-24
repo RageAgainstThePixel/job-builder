@@ -54,7 +54,7 @@ function generateJobs(): void {
         .join(' ');
       const includeKeys = Object.keys(includeProps);
       if (jobName === combination.os && includeKeys.length > 0) {
-        jobName = `${jobName} ${includeKeys.map(k => `${k}=${includeProps[k]}`).join(' ')}`;
+        jobName = `${includeKeys.map(k => `${includeProps[k]}`).join(' ')}`;
       }
       const job = {
         name: jobName,
