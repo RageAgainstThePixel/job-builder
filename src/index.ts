@@ -64,9 +64,12 @@ function generateJobs(): void {
       for (const obj of includeArr) {
         if (typeof obj === 'object' && obj !== null) {
           const group = obj[groupBy] || 'include';
-          let job = { ...obj };
+          // Find a matrix combination that matches all shared keys in obj
+          const match = combinations.find(e => Object.keys(obj).every(k => e[k] === obj[k]));
+          // Fill in missing properties from the match
+          let job = match ? { ...match, ...obj } : { ...obj };
           if (!('name' in job)) {
-            job.name = Object.values(obj).join(' ');
+            job.name = Object.values(job).join(' ');
           }
           if (!matchesExclusion(job, exclude)) {
             if (!jobs[group]) {

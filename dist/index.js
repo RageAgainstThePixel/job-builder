@@ -27611,9 +27611,10 @@ function generateJobs() {
             for (const obj of includeArr) {
                 if (typeof obj === 'object' && obj !== null) {
                     const group = obj[groupBy] || 'include';
-                    let job = { ...obj };
+                    const match = combinations.find(e => Object.keys(obj).every(k => e[k] === obj[k]));
+                    let job = match ? { ...match, ...obj } : { ...obj };
                     if (!('name' in job)) {
-                        job.name = Object.values(obj).join(' ');
+                        job.name = Object.values(job).join(' ');
                     }
                     if (!matchesExclusion(job, exclude)) {
                         if (!jobs[group]) {
