@@ -27575,13 +27575,22 @@ main();
 function generateJobs() {
     const buildOptionsInputPath = core.getInput('build-options', { required: true });
     const buildOptions = JSON.parse(fs.readFileSync(buildOptionsInputPath, 'utf8'));
-    const props = Object.keys(buildOptions).filter(key => key !== 'exclude' && Array.isArray(buildOptions[key]));
+    const props = Object.keys(buildOptions).filter(key => key !== 'exclude' && key !== 'include' && Array.isArray(buildOptions[key]));
     const values = {};
     for (const p of props) {
         values[p] = buildOptions[p];
     }
     const combinations = getCombinations(props, values);
-    const exclude = buildOptions.exclude || [];
+    const exclude = Array.isArray(buildOptions.exclude) ? buildOptions.exclude : (buildOptions.exclude ? [buildOptions.exclude] : []);
+    let includeObj = {};
+    if (buildOptions.include) {
+        if (Array.isArray(buildOptions.include)) {
+            includeObj = buildOptions.include.length > 0 ? buildOptions.include[0] : {};
+        }
+        else if (typeof buildOptions.include === 'object') {
+            includeObj = buildOptions.include;
+        }
+    }
     const jobs = {};
     const groupBy = core.getInput('group-by') || props[0];
     core.startGroup(`Generating jobs for group: ${groupBy}`);
@@ -27593,6 +27602,7 @@ function generateJobs() {
                     .map(p => combination[p])
                     .join(' '),
                 ...combination,
+                ...includeObj,
             };
             if (matchesExclusion(job, exclude)) {
                 core.debug(`Excluding job: ${JSON.stringify(job)}`);

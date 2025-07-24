@@ -26,24 +26,34 @@ main();
 function generateJobs(): void {
   const buildOptionsInputPath: string = core.getInput('build-options', { required: true });
   const buildOptions: BuildOptions = JSON.parse(fs.readFileSync(buildOptionsInputPath, 'utf8'));
-  const props: string[] = Object.keys(buildOptions).filter(key => key !== 'exclude' && Array.isArray(buildOptions[key]));
+  const props: string[] = Object.keys(buildOptions).filter(key => key !== 'exclude' && key !== 'include' && Array.isArray(buildOptions[key]));
   const values: Record<string, string[]> = {};
   for (const p of props) {
     values[p] = buildOptions[p] as string[];
   }
   const combinations: Array<Record<string, string>> = getCombinations(props, values);
-  const exclude: Array<Record<string, string>> = buildOptions.exclude || [];
+  const exclude: Array<Record<string, string>> = Array.isArray(buildOptions.exclude) ? buildOptions.exclude : (buildOptions.exclude ? [buildOptions.exclude] : []);
+  let includeObj: Record<string, string> = {};
+  if (buildOptions.include) {
+    if (Array.isArray(buildOptions.include)) {
+      includeObj = buildOptions.include.length > 0 ? buildOptions.include[0] : {};
+    } else if (typeof buildOptions.include === 'object') {
+      includeObj = buildOptions.include;
+    }
+  }
   const jobs: Record<string, any[]> = {};
   const groupBy: string = core.getInput('group-by') || props[0];
   core.startGroup(`Generating jobs for group: ${groupBy}`);
   try {
     for (const combination of combinations) {
+      // Merge includeObj into each job combination
       const job = {
         name: props
           .filter(p => p !== groupBy && values[p].length > 1)
           .map(p => combination[p])
           .join(' '),
         ...combination,
+        ...includeObj,
       }
       if (matchesExclusion(job, exclude)) {
         core.debug(`Excluding job: ${JSON.stringify(job)}`);

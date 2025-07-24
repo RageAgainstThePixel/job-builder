@@ -1,6 +1,6 @@
 {
   "name": "job-builder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A GitHub action to setup job matrixes for complex job workflows.",
   "author": "RageAgainstThePixel",
   "license": "MIT",

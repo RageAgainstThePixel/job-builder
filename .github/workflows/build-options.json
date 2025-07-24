@@ -9,9 +9,6 @@
     "6000.0.49f1 (840e0a9776d9)",
     "6000.1.x"
   ],
-  "build-target": [
-    "WSAPlayer"
-  ],
   "uwp-arch": [
     "x64",
     "ARM64"
@@ -40,6 +37,11 @@
     {
       "uwp-subtarget": "HoloLens",
       "uwp-arch": "x64"
+    }
+  ],
+  "include": [
+    {
+      "build-target": "WSAPlayer"
     }
   ]
 }
