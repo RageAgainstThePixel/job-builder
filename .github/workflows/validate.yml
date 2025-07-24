@@ -31,6 +31,9 @@ jobs:
     secrets: inherit
     permissions:
       contents: read
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-validate
+      cancel-in-progress: false
     strategy:
       matrix: ${{ fromJSON(needs.setup.outputs.jobs) }}
     uses: ./.github/workflows/build.yml
