@@ -36,8 +36,13 @@ function generateJobs(): void {
   let includeObj: Record<string, string> = {};
   if (buildOptions.include) {
     if (Array.isArray(buildOptions.include)) {
-      includeObj = buildOptions.include.length > 0 ? buildOptions.include[0] : {};
-    } else if (typeof buildOptions.include === 'object') {
+      // Merge all objects in the array, last wins on key conflict
+      for (const obj of buildOptions.include) {
+        if (typeof obj === 'object' && obj !== null) {
+          includeObj = { ...includeObj, ...obj };
+        }
+      }
+    } else if (typeof buildOptions.include === 'object' && buildOptions.include !== null) {
       includeObj = buildOptions.include;
     }
   }
@@ -46,7 +51,6 @@ function generateJobs(): void {
   core.startGroup(`Generating jobs for group: ${groupBy}`);
   try {
     for (const combination of combinations) {
-      // Merge includeObj into each job combination
       const job = {
         name: props
           .filter(p => p !== groupBy && values[p].length > 1)

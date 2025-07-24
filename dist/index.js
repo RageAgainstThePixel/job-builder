@@ -27585,9 +27585,13 @@ function generateJobs() {
     let includeObj = {};
     if (buildOptions.include) {
         if (Array.isArray(buildOptions.include)) {
-            includeObj = buildOptions.include.length > 0 ? buildOptions.include[0] : {};
+            for (const obj of buildOptions.include) {
+                if (typeof obj === 'object' && obj !== null) {
+                    includeObj = { ...includeObj, ...obj };
+                }
+            }
         }
-        else if (typeof buildOptions.include === 'object') {
+        else if (typeof buildOptions.include === 'object' && buildOptions.include !== null) {
             includeObj = buildOptions.include;
         }
     }
