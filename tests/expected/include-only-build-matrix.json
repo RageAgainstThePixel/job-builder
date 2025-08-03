@@ -1,0 +1,26 @@
+{
+  "jobs": [
+    {
+      "name": "job",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "6000.x"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "6000.x"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "6000.x"
+          }
+        ]
+      }
+    }
+  ]
+}

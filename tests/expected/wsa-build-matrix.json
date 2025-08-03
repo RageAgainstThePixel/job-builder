@@ -1,0 +1,560 @@
+{
+  "jobs": [
+    {
+      "name": "Build 2019.x",
+      "matrix": {
+        "include": [
+          {
+            "name": "x64 PC sideload default 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "2019.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "sideload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC sideload default 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "2019.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "sideload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC sideload custom 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "2019.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "sideload",
+            "certificate-type": "custom",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC sideload custom 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "2019.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "sideload",
+            "certificate-type": "custom",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC upload default 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "2019.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "upload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC upload default 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "2019.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "upload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens sideload default 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "2019.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "sideload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens sideload default 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "2019.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "sideload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens sideload custom 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "2019.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "sideload",
+            "certificate-type": "custom",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens sideload custom 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "2019.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "sideload",
+            "certificate-type": "custom",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens upload default 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "2019.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "upload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens upload default 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "2019.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "upload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 2022.3.x",
+      "matrix": {
+        "include": [
+          {
+            "name": "x64 PC sideload default 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "2022.3.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "sideload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC sideload default 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "2022.3.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "sideload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC sideload custom 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "2022.3.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "sideload",
+            "certificate-type": "custom",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC sideload custom 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "2022.3.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "sideload",
+            "certificate-type": "custom",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC upload default 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "2022.3.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "upload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC upload default 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "2022.3.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "upload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens sideload default 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "2022.3.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "sideload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens sideload default 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "2022.3.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "sideload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens sideload custom 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "2022.3.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "sideload",
+            "certificate-type": "custom",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens sideload custom 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "2022.3.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "sideload",
+            "certificate-type": "custom",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens upload default 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "2022.3.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "upload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens upload default 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "2022.3.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "upload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 6000.0.49f1 (840e0a9776d9)",
+      "matrix": {
+        "include": [
+          {
+            "name": "x64 PC sideload default 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "6000.0.49f1 (840e0a9776d9)",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "sideload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC sideload default 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "6000.0.49f1 (840e0a9776d9)",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "sideload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC sideload custom 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "6000.0.49f1 (840e0a9776d9)",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "sideload",
+            "certificate-type": "custom",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC sideload custom 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "6000.0.49f1 (840e0a9776d9)",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "sideload",
+            "certificate-type": "custom",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC upload default 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "6000.0.49f1 (840e0a9776d9)",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "upload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC upload default 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "6000.0.49f1 (840e0a9776d9)",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "upload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens sideload default 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "6000.0.49f1 (840e0a9776d9)",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "sideload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens sideload default 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "6000.0.49f1 (840e0a9776d9)",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "sideload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens sideload custom 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "6000.0.49f1 (840e0a9776d9)",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "sideload",
+            "certificate-type": "custom",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens sideload custom 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "6000.0.49f1 (840e0a9776d9)",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "sideload",
+            "certificate-type": "custom",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens upload default 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "6000.0.49f1 (840e0a9776d9)",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "upload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens upload default 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "6000.0.49f1 (840e0a9776d9)",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "upload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 6000.1.x",
+      "matrix": {
+        "include": [
+          {
+            "name": "x64 PC sideload default 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "6000.1.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "sideload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC sideload default 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "6000.1.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "sideload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC sideload custom 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "6000.1.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "sideload",
+            "certificate-type": "custom",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC sideload custom 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "6000.1.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "sideload",
+            "certificate-type": "custom",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC upload default 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "6000.1.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "upload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "x64 PC upload default 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "6000.1.x",
+            "uwp-arch": "x64",
+            "uwp-subtarget": "PC",
+            "uwp-package-type": "upload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens sideload default 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "6000.1.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "sideload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens sideload default 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "6000.1.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "sideload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens sideload custom 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "6000.1.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "sideload",
+            "certificate-type": "custom",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens sideload custom 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "6000.1.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "sideload",
+            "certificate-type": "custom",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens upload default 10.0.22621.0",
+            "os": "windows-latest",
+            "unity-version": "6000.1.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "upload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.22621.0",
+            "build-target": "WSAPlayer"
+          },
+          {
+            "name": "ARM64 HoloLens upload default 10.0.26100.0",
+            "os": "windows-latest",
+            "unity-version": "6000.1.x",
+            "uwp-arch": "ARM64",
+            "uwp-subtarget": "HoloLens",
+            "uwp-package-type": "upload",
+            "certificate-type": "default",
+            "windows-sdk-version": "10.0.26100.0",
+            "build-target": "WSAPlayer"
+          }
+        ]
+      }
+    }
+  ]
+}

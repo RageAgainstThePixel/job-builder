@@ -15,6 +15,12 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+      - name: Action Validation
+        shell: bash
+        run: |
+          npm install
+          npm run build
+          npm run tests
       - name: Setup Jobs
         id: setup-jobs
         uses: ./ # RageAgainstThePixel/job-builder
@@ -22,6 +28,14 @@ jobs:
           build-options: ./.github/workflows/build-options.json
           group-by: 'unity-version' # Optional, defaults to the first property in the build options object
           job-name-prefix: 'Build' # Optional, defaults to empty string
+      - name: Verify Job Output was generated
+        run: |
+          output=$(echo '${{ steps.setup-jobs.outputs.jobs }}' | jq -r '. | length')
+          if [ -z "$output" ] || [ "$output" -eq 0 ]; then
+            echo "No jobs were generated. Please check your build options.";
+            exit 1;
+          fi
+        shell: bash
     outputs:
       jobs: ${{ steps.setup-jobs.outputs.jobs }}
   validate:

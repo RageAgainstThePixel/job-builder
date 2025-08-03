@@ -1,6 +1,6 @@
 {
   "name": "job-builder",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A GitHub action to setup job matrixes for complex job workflows.",
   "author": "RageAgainstThePixel",
   "license": "MIT",
@@ -18,12 +18,16 @@
     "@actions/core": "^1.11.1"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.16.5",
     "@vercel/ncc": "^0.34.0",
+    "jest": "^30.0.5",
     "shx": "^0.3.4",
+    "ts-jest": "^29.4.1",
     "typescript": "^5.8.3"
   },
   "scripts": {
+    "tests": "jest --runInBand --detectOpenHandles --forceExit",
     "build": "npm run clean && npm run bundle",
     "bundle": "ncc build src/index.ts -o dist --source-map --license licenses.txt",
     "clean": "npm install && shx rm -rf dist/ out/ node_modules/ && npm ci"
