@@ -15,6 +15,12 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+      - name: Action Validation
+        shell: bash
+        run: |
+          npm install
+          npm run build
+          npx jest
       - name: Setup Jobs
         id: setup-jobs
         uses: ./ # RageAgainstThePixel/job-builder
