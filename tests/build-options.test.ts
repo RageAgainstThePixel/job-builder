@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {
     generateJobsMatrix,
-} from '../src/index';
+} from '../src/generate-job-matrix';
 import {
     BuildOptions,
     JobMatrix
