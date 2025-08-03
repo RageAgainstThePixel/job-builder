@@ -25701,14 +25701,16 @@ const main = async () => {
 };
 main();
 function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
-    const props = Object.keys(buildOptions).filter(key => key !== 'exclude' && key !== 'include' && Array.isArray(buildOptions[key]));
+    const rootProperties = Object.keys(buildOptions).filter(key => key !== 'exclude' && key !== 'include' && Array.isArray(buildOptions[key]));
+    const groupByKey = groupBy || rootProperties[0] || undefined;
+    const exclude = Array.isArray(buildOptions.exclude) ? buildOptions.exclude : (buildOptions.exclude ? [buildOptions.exclude] : []);
+    const include = Array.isArray(buildOptions.include) ? buildOptions.include : (buildOptions.include ? [buildOptions.include] : []);
     const values = {};
-    for (const p of props) {
+    for (const p of rootProperties) {
         values[p] = buildOptions[p];
     }
-    if (props.length === 0 && Array.isArray(buildOptions.include)) {
-        const exclude = Array.isArray(buildOptions.exclude) ? buildOptions.exclude : (buildOptions.exclude ? [buildOptions.exclude] : []);
-        const jobs = buildOptions.include.filter(job => !matchesExclusion(job, exclude));
+    if (rootProperties.length === 0 && Array.isArray(buildOptions.include)) {
+        const jobs = include.filter(job => !matchesExclusion(job, exclude));
         return {
             jobs: [
                 {
@@ -25718,23 +25720,50 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
             ]
         };
     }
-    const combinations = getCombinations(props, values);
-    const exclude = Array.isArray(buildOptions.exclude) ? buildOptions.exclude : (buildOptions.exclude ? [buildOptions.exclude] : []);
+    if (include.length > 0 && rootProperties.length > 0 && groupByKey) {
+        const otherProps = rootProperties.filter(p => p !== groupByKey);
+        const allIncludeCoverOtherProps = include.every(inc => otherProps.every(p => Object.prototype.hasOwnProperty.call(inc, p)));
+        if (allIncludeCoverOtherProps) {
+            const groupByValues = values[groupByKey] || [];
+            const jobsArray = [];
+            for (const groupValue of groupByValues) {
+                const groupJobs = [];
+                for (const inc of include) {
+                    const job = { ...inc, [groupByKey]: groupValue };
+                    if (!matchesExclusion(job, exclude)) {
+                        if (!job.name) {
+                            const keys = Object.keys(job).filter(k => k !== 'name' && k !== groupByKey);
+                            const osIndex = keys.indexOf('os');
+                            if (osIndex > -1) {
+                                keys.splice(osIndex, 1);
+                                keys.unshift('os');
+                            }
+                            const nameParts = keys.map(k => job[k]);
+                            job.name = nameParts.join(' ');
+                        }
+                        groupJobs.push(job);
+                    }
+                }
+                jobsArray.push({
+                    name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${groupValue}` : groupValue,
+                    matrix: { include: groupJobs },
+                });
+            }
+            return { jobs: jobsArray };
+        }
+    }
+    const combinations = getCombinations(rootProperties, values);
     const jobs = {};
-    const groupByKey = groupBy || props[0];
     for (const combination of combinations) {
         let includeProps = {};
-        if (buildOptions.include) {
-            const includeArr = Array.isArray(buildOptions.include)
-                ? buildOptions.include
-                : [buildOptions.include];
-            const match = includeArr.find(e => typeof e === 'object' && e !== null && e.os === combination.os);
-            if (match) {
-                includeProps = { ...match };
+        if (include.length > 0) {
+            const matchingIncludes = include.filter(rule => Object.entries(rule).every(([k, v]) => combination[k] === undefined || combination[k] === v));
+            for (const rule of matchingIncludes) {
+                includeProps = { ...includeProps, ...rule };
             }
         }
-        let jobName = props
-            .filter(p => p !== groupByKey && values[p].length > 1)
+        let jobName = rootProperties
+            .filter(p => (groupByKey !== undefined && p !== groupByKey) && values[p].length > 1)
             .map(p => combination[p])
             .join(' ');
         const includeKeys = Object.keys(includeProps);
