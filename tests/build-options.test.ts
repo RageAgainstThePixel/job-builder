@@ -30,8 +30,8 @@ describe('build-options source/expected pairs', () => {
         const expectedPath = path.join(expectedDir, `${prefix}-build-matrix.json`);
         it(`should match expected output for ${prefix}`, () => {
             const sourceJson: BuildOptions = JSON.parse(fs.readFileSync(sourcePath, 'utf-8'));
-            const expectedJson = JSON.parse(fs.readFileSync(expectedPath, 'utf-8'));
             const result: JobMatrix = generateJobsMatrix(sourceJson, groupBy, jobNamePrefix);
+            const expectedJson: JobMatrix = JSON.parse(fs.readFileSync(expectedPath, 'utf-8'));
             expect(result).toEqual(expectedJson);
         });
     });
