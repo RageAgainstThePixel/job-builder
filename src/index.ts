@@ -78,9 +78,6 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
     if (jobName === combination.os && includeKeys.length > 0) {
       jobName = `${includeKeys.map(k => `${includeProps[k]}`).join(' ')}`;
     }
-    if (jobNamePrefix && jobNamePrefix.trim().length > 0) {
-      jobName = `${jobNamePrefix} ${jobName}`;
-    }
     const job = {
       name: jobName,
       ...combination,
