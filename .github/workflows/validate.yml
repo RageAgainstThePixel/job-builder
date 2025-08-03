@@ -30,7 +30,7 @@ jobs:
           job-name-prefix: 'Build' # Optional, defaults to empty string
       - name: Verify Job Output was generated
         run: |
-          output=$(echo "${{ steps.setup-jobs.outputs.jobs }}" | jq -r '. | length')
+          output=$(echo '${{ steps.setup-jobs.outputs.jobs }}' | jq -r '. | length')
           if [ -z "$output" ] || [ "$output" -eq 0 ]; then
             echo "No jobs were generated. Please check your build options.";
             exit 1;
