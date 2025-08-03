@@ -7,7 +7,9 @@ const main = async () => {
     const buildOptions: BuildOptions = JSON.parse(fs.readFileSync(buildOptionsPath, 'utf-8'));
     const groupBy: string | undefined = core.getInput('group-by');
     const jobNamePrefix: string | undefined = core.getInput('job-name-prefix');
-    generateJobsMatrix(buildOptions, groupBy, jobNamePrefix);
+    const jobs = generateJobsMatrix(buildOptions, groupBy, jobNamePrefix);
+    core.info(JSON.stringify(jobs, null, 2));
+    core.setOutput('jobs', JSON.stringify(jobs));
   } catch (error) {
     core.setFailed(error);
   }
