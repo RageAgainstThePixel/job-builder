@@ -38,9 +38,6 @@ describe('build-options source/expected pairs', () => {
                 expectedExists = false;
             }
             const result: JobMatrix = generateJobsMatrix(sourceJson, groupBy, jobNamePrefix);
-            if (!expectedExists && prefix === 'unity-upm') {
-                console.log('Generated output for unity-upm:', JSON.stringify(result, null, 2));
-            }
             expect(result).toEqual(expectedJson);
         });
     });
