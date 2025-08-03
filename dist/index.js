@@ -25643,6 +25643,155 @@ module.exports = {
 
 /***/ }),
 
+/***/ 6144:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.generateJobsMatrix = generateJobsMatrix;
+const core = __importStar(__nccwpck_require__(2186));
+const fs = __importStar(__nccwpck_require__(7147));
+const main = async () => {
+    try {
+        const buildOptionsPath = core.getInput('build-options', { required: true });
+        const buildOptions = JSON.parse(fs.readFileSync(buildOptionsPath, 'utf-8'));
+        const groupBy = core.getInput('group-by');
+        const jobNamePrefix = core.getInput('job-name-prefix');
+        generateJobsMatrix(buildOptions, groupBy, jobNamePrefix);
+    }
+    catch (error) {
+        core.setFailed(error);
+    }
+};
+main();
+function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
+    const props = Object.keys(buildOptions).filter(key => key !== 'exclude' && key !== 'include' && Array.isArray(buildOptions[key]));
+    const values = {};
+    for (const p of props) {
+        values[p] = buildOptions[p];
+    }
+    if (props.length === 0 && Array.isArray(buildOptions.include)) {
+        const exclude = Array.isArray(buildOptions.exclude) ? buildOptions.exclude : (buildOptions.exclude ? [buildOptions.exclude] : []);
+        const jobs = buildOptions.include.filter(job => !matchesExclusion(job, exclude));
+        return {
+            jobs: [
+                {
+                    name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? jobNamePrefix : 'job',
+                    matrix: { include: jobs }
+                }
+            ]
+        };
+    }
+    const combinations = getCombinations(props, values);
+    const exclude = Array.isArray(buildOptions.exclude) ? buildOptions.exclude : (buildOptions.exclude ? [buildOptions.exclude] : []);
+    const jobs = {};
+    const groupByKey = groupBy || props[0];
+    for (const combination of combinations) {
+        let includeProps = {};
+        if (buildOptions.include) {
+            const includeArr = Array.isArray(buildOptions.include)
+                ? buildOptions.include
+                : [buildOptions.include];
+            const match = includeArr.find(e => typeof e === 'object' && e !== null && e.os === combination.os);
+            if (match) {
+                includeProps = { ...match };
+            }
+        }
+        let jobName = props
+            .filter(p => p !== groupByKey && values[p].length > 1)
+            .map(p => combination[p])
+            .join(' ');
+        const includeKeys = Object.keys(includeProps);
+        if (jobName === combination.os && includeKeys.length > 0) {
+            jobName = `${includeKeys.map(k => `${includeProps[k]}`).join(' ')}`;
+        }
+        if (jobNamePrefix && jobNamePrefix.trim().length > 0) {
+            jobName = `${jobNamePrefix} ${jobName}`;
+        }
+        const job = {
+            name: jobName,
+            ...combination,
+            ...includeProps,
+        };
+        if (matchesExclusion(job, exclude)) {
+            continue;
+        }
+        let group = combination[groupByKey];
+        if (group === undefined && includeProps && includeProps[groupByKey]) {
+            group = includeProps[groupByKey];
+        }
+        if (group === undefined) {
+            throw new Error(`Group '${groupByKey}' is undefined for job: ${JSON.stringify(job)}`);
+        }
+        if (!jobs[group]) {
+            jobs[group] = [];
+        }
+        jobs[group].push(job);
+    }
+    const jobsArray = Object.entries(jobs).map(([group, jobs]) => ({
+        name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${group}` : group,
+        matrix: {
+            include: jobs,
+        },
+    }));
+    return { jobs: jobsArray };
+}
+function matchesExclusion(job, exclude) {
+    if (!exclude)
+        return false;
+    return exclude.some(rule => Object.entries(rule).every(([k, v]) => job[k] === v));
+}
+function getCombinations(props, values) {
+    if (props.length === 0)
+        return [{}];
+    const [first, ...rest] = props;
+    const restComb = getCombinations(rest, values);
+    const result = [];
+    for (const v of values[first]) {
+        for (const comb of restComb) {
+            result.push({ [first]: v, ...comb });
+        }
+    }
+    return result;
+}
+
+
+/***/ }),
+
 /***/ 4978:
 /***/ ((module) => {
 
@@ -27554,123 +27703,13 @@ module.exports = parseParams
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
-(() => {
-"use strict";
-var exports = __webpack_exports__;
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core = __nccwpck_require__(2186);
-const fs = __nccwpck_require__(7147);
-const main = async () => {
-    try {
-        generateJobs();
-    }
-    catch (error) {
-        core.setFailed(error);
-    }
-};
-main();
-function generateJobs() {
-    const buildOptionsInputPath = core.getInput('build-options', { required: true });
-    const buildOptions = JSON.parse(fs.readFileSync(buildOptionsInputPath, 'utf8'));
-    const props = Object.keys(buildOptions).filter(key => key !== 'exclude' && key !== 'include' && Array.isArray(buildOptions[key]));
-    const values = {};
-    for (const p of props) {
-        values[p] = buildOptions[p];
-    }
-    const combinations = getCombinations(props, values);
-    const exclude = Array.isArray(buildOptions.exclude) ? buildOptions.exclude : (buildOptions.exclude ? [buildOptions.exclude] : []);
-    const jobs = {};
-    const groupBy = core.getInput('group-by') || props[0];
-    core.startGroup(`Generating jobs for group: ${groupBy}`);
-    try {
-        for (const combination of combinations) {
-            let includeProps = {};
-            if (buildOptions.include) {
-                const includeArr = Array.isArray(buildOptions.include)
-                    ? buildOptions.include
-                    : [buildOptions.include];
-                const match = includeArr.find(e => typeof e === 'object' && e !== null && e.os === combination.os);
-                if (match) {
-                    includeProps = { ...match };
-                }
-            }
-            let jobName = props
-                .filter(p => p !== groupBy && values[p].length > 1)
-                .map(p => combination[p])
-                .join(' ');
-            const includeKeys = Object.keys(includeProps);
-            if (jobName === combination.os && includeKeys.length > 0) {
-                jobName = `${includeKeys.map(k => `${includeProps[k]}`).join(' ')}`;
-            }
-            const job = {
-                name: jobName,
-                ...combination,
-                ...includeProps,
-            };
-            if (matchesExclusion(job, exclude)) {
-                core.debug(`Excluding job: ${JSON.stringify(job)}`);
-                continue;
-            }
-            let group = combination[groupBy];
-            if (group === undefined && includeProps && includeProps[groupBy]) {
-                group = includeProps[groupBy];
-            }
-            if (group === undefined) {
-                throw new Error(`Group '${groupBy}' is undefined for job: ${JSON.stringify(job)}`);
-            }
-            if (!jobs[group]) {
-                jobs[group] = [];
-            }
-            jobs[group].push(job);
-        }
-    }
-    finally {
-        core.endGroup();
-    }
-    const jobsArray = Object.entries(jobs).map(([group, jobs]) => ({
-        name: getGroupName(group),
-        matrix: {
-            include: jobs,
-        },
-    }));
-    const jobsJson = { jobs: jobsArray };
-    core.info(JSON.stringify(jobsJson, null, 2));
-    core.setOutput('jobs', JSON.stringify(jobsJson));
-}
-function getGroupName(group) {
-    const prefix = core.getInput('job-name-prefix');
-    if (prefix && prefix.trim().length > 0) {
-        return `${prefix} ${group}`;
-    }
-    else {
-        return group;
-    }
-}
-function matchesExclusion(job, exclude) {
-    if (!exclude)
-        return false;
-    return exclude.some(rule => Object.entries(rule).every(([k, v]) => job[k] === v));
-}
-function getCombinations(props, values) {
-    if (props.length === 0)
-        return [{}];
-    const [first, ...rest] = props;
-    const restComb = getCombinations(rest, values);
-    const result = [];
-    for (const v of values[first]) {
-        for (const comb of restComb) {
-            result.push({ [first]: v, ...comb });
-        }
-    }
-    return result;
-}
-
-})();
-
-module.exports = __webpack_exports__;
+/******/ 	
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
+/******/ 	var __webpack_exports__ = __nccwpck_require__(6144);
+/******/ 	module.exports = __webpack_exports__;
+/******/ 	
 /******/ })()
 ;
 //# sourceMappingURL=index.js.map

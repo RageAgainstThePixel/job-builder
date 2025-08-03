@@ -1,0 +1,179 @@
+{
+  "jobs": [
+    {
+      "name": "ubuntu-latest",
+      "matrix": {
+        "include": [
+          {
+            "name": "None",
+            "os": "ubuntu-latest",
+            "unity-version": "None",
+            "build-targets": "StandaloneLinux64, Android, iOS",
+            "modules": "linux-server"
+          },
+          {
+            "name": "2020.3",
+            "os": "ubuntu-latest",
+            "unity-version": "2020.3",
+            "build-targets": "StandaloneLinux64, Android, iOS",
+            "modules": "linux-server"
+          },
+          {
+            "name": "2021.3.x",
+            "os": "ubuntu-latest",
+            "unity-version": "2021.3.x",
+            "build-targets": "StandaloneLinux64, Android, iOS",
+            "modules": "linux-server"
+          },
+          {
+            "name": "2022.x",
+            "os": "ubuntu-latest",
+            "unity-version": "2022.x",
+            "build-targets": "StandaloneLinux64, Android, iOS",
+            "modules": "linux-server"
+          },
+          {
+            "name": "6000.0.x",
+            "os": "ubuntu-latest",
+            "unity-version": "6000.0.x",
+            "build-targets": "StandaloneLinux64, Android, iOS",
+            "modules": "linux-server"
+          },
+          {
+            "name": "6000",
+            "os": "ubuntu-latest",
+            "unity-version": "6000",
+            "build-targets": "StandaloneLinux64, Android, iOS",
+            "modules": "linux-server"
+          }
+        ]
+      }
+    },
+    {
+      "name": "windows-latest",
+      "matrix": {
+        "include": [
+          {
+            "name": "None",
+            "os": "windows-latest",
+            "unity-version": "None",
+            "build-targets": "StandaloneWindows64, Android, WSAPlayer",
+            "modules": "windows-server"
+          },
+          {
+            "name": "4.7.2",
+            "os": "windows-latest",
+            "unity-version": "4.7.2",
+            "build-targets": "StandaloneWindows64, Android, WSAPlayer",
+            "modules": "windows-server"
+          },
+          {
+            "name": "5.6.7f1 (e80cc3114ac1)",
+            "os": "windows-latest",
+            "unity-version": "5.6.7f1 (e80cc3114ac1)",
+            "build-targets": "StandaloneWindows64, Android, WSAPlayer",
+            "modules": "windows-server"
+          },
+          {
+            "name": "2020.3",
+            "os": "windows-latest",
+            "unity-version": "2020.3",
+            "build-targets": "StandaloneWindows64, Android, WSAPlayer",
+            "modules": "windows-server"
+          },
+          {
+            "name": "2021.3.x",
+            "os": "windows-latest",
+            "unity-version": "2021.3.x",
+            "build-targets": "StandaloneWindows64, Android, WSAPlayer",
+            "modules": "windows-server"
+          },
+          {
+            "name": "2022.x",
+            "os": "windows-latest",
+            "unity-version": "2022.x",
+            "build-targets": "StandaloneWindows64, Android, WSAPlayer",
+            "modules": "windows-server"
+          },
+          {
+            "name": "6000.0.x",
+            "os": "windows-latest",
+            "unity-version": "6000.0.x",
+            "build-targets": "StandaloneWindows64, Android, WSAPlayer",
+            "modules": "windows-server"
+          },
+          {
+            "name": "6000",
+            "os": "windows-latest",
+            "unity-version": "6000",
+            "build-targets": "StandaloneWindows64, Android, WSAPlayer",
+            "modules": "windows-server"
+          }
+        ]
+      }
+    },
+    {
+      "name": "macos-latest",
+      "matrix": {
+        "include": [
+          {
+            "name": "None",
+            "os": "macos-latest",
+            "unity-version": "None",
+            "build-targets": "StandaloneOSX Android iOS VisionOS",
+            "modules": "mac-server"
+          },
+          {
+            "name": "4.7.2",
+            "os": "macos-latest",
+            "unity-version": "4.7.2",
+            "build-targets": "StandaloneOSX Android iOS VisionOS",
+            "modules": "mac-server"
+          },
+          {
+            "name": "5.6.7f1 (e80cc3114ac1)",
+            "os": "macos-latest",
+            "unity-version": "5.6.7f1 (e80cc3114ac1)",
+            "build-targets": "StandaloneOSX Android iOS VisionOS",
+            "modules": "mac-server"
+          },
+          {
+            "name": "2020.3",
+            "os": "macos-latest",
+            "unity-version": "2020.3",
+            "build-targets": "StandaloneOSX Android iOS VisionOS",
+            "modules": "mac-server"
+          },
+          {
+            "name": "2021.3.x",
+            "os": "macos-latest",
+            "unity-version": "2021.3.x",
+            "build-targets": "StandaloneOSX Android iOS VisionOS",
+            "modules": "mac-server"
+          },
+          {
+            "name": "2022.x",
+            "os": "macos-latest",
+            "unity-version": "2022.x",
+            "build-targets": "StandaloneOSX Android iOS VisionOS",
+            "modules": "mac-server"
+          },
+          {
+            "name": "6000.0.x",
+            "os": "macos-latest",
+            "unity-version": "6000.0.x",
+            "build-targets": "StandaloneOSX Android iOS VisionOS",
+            "modules": "mac-server"
+          },
+          {
+            "name": "6000",
+            "os": "macos-latest",
+            "unity-version": "6000",
+            "build-targets": "StandaloneOSX Android iOS VisionOS",
+            "modules": "mac-server"
+          }
+        ]
+      }
+    }
+  ]
+}

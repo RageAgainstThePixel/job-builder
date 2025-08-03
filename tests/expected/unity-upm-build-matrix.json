@@ -1,0 +1,90 @@
+{
+  "jobs": [
+    {
+      "name": "2022.x",
+      "matrix": {
+        "include": [
+          {
+            "name": "ubuntu-latest StandaloneLinux64",
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "2022.x"
+          },
+          {
+            "name": "ubuntu-latest WebGL",
+            "os": "ubuntu-latest",
+            "build-target": "WebGL",
+            "unity-version": "2022.x"
+          },
+          {
+            "name": "ubuntu-latest Android",
+            "os": "ubuntu-latest",
+            "build-target": "Android",
+            "unity-version": "2022.x"
+          },
+          {
+            "name": "ubuntu-latest iOS",
+            "os": "ubuntu-latest",
+            "build-target": "iOS",
+            "unity-version": "2022.x"
+          },
+          {
+            "name": "windows-latest StandaloneWindows64",
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "2022.x"
+          },
+          {
+            "name": "macos-latest StandaloneOSX",
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "2022.x"
+          }
+        ]
+      }
+    },
+    {
+      "name": "6000.x",
+      "matrix": {
+        "include": [
+          {
+            "name": "ubuntu-latest StandaloneLinux64",
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "6000.x"
+          },
+          {
+            "name": "ubuntu-latest WebGL",
+            "os": "ubuntu-latest",
+            "build-target": "WebGL",
+            "unity-version": "6000.x"
+          },
+          {
+            "name": "ubuntu-latest Android",
+            "os": "ubuntu-latest",
+            "build-target": "Android",
+            "unity-version": "6000.x"
+          },
+          {
+            "name": "ubuntu-latest iOS",
+            "os": "ubuntu-latest",
+            "build-target": "iOS",
+            "unity-version": "6000.x"
+          },
+          {
+            "name": "windows-latest StandaloneWindows64",
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "6000.x"
+          },
+          {
+            "name": "macos-latest StandaloneOSX",
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "6000.x"
+          }
+        ]
+      }
+    }
+  ]
+}
