@@ -22,6 +22,13 @@ jobs:
           build-options: ./.github/workflows/build-options.json
           group-by: 'unity-version' # Optional, defaults to the first property in the build options object
           job-name-prefix: 'Build' # Optional, defaults to empty string
+      - name: Verify Job Output was generated
+        run: |
+          if [ -z "${{ steps.setup-jobs.outputs.jobs }}" ]; then
+            echo "No jobs were generated. Please check your build options.";
+            exit 1;
+          fi
+        shell: bash
     outputs:
       jobs: ${{ steps.setup-jobs.outputs.jobs }}
   validate:
