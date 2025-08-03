@@ -20,7 +20,7 @@ jobs:
         run: |
           npm install
           npm run build
-          npx jest
+          npm run tests
       - name: Setup Jobs
         id: setup-jobs
         uses: ./ # RageAgainstThePixel/job-builder

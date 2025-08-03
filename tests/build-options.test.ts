@@ -2,8 +2,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {
     generateJobsMatrix,
-    BuildOptions
 } from '../src/index';
+import {
+    BuildOptions,
+    JobMatrix
+} from '../src/types';
 
 describe('build-options source/expected pairs', () => {
     const sourceDir = path.resolve(__dirname, 'source');
@@ -18,7 +21,7 @@ describe('build-options source/expected pairs', () => {
             { prefix: 'wsa', groupBy: 'unity-version', jobNamePrefix: 'Build' },
             { prefix: 'unity-setup', groupBy: 'os' },
             { prefix: 'unity-upm', groupBy: 'unity-version' },
-            { prefix: 'include-only' }, // new test case for include-only, no groupBy
+            { prefix: 'include-only' },
             // Add more test cases here as needed
         ];
 
@@ -34,10 +37,8 @@ describe('build-options source/expected pairs', () => {
             } catch (e) {
                 expectedExists = false;
             }
-            const result = generateJobsMatrix(sourceJson, groupBy, jobNamePrefix);
+            const result: JobMatrix = generateJobsMatrix(sourceJson, groupBy, jobNamePrefix);
             if (!expectedExists && prefix === 'unity-upm') {
-                // Print the generated output for review
-                // eslint-disable-next-line no-console
                 console.log('Generated output for unity-upm:', JSON.stringify(result, null, 2));
             }
             expect(result).toEqual(expectedJson);

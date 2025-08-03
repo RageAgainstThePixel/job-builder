@@ -25701,14 +25701,11 @@ const main = async () => {
 };
 main();
 function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
-    const rootProperties = Object.keys(buildOptions).filter(key => key !== 'exclude' && key !== 'include' && Array.isArray(buildOptions[key]));
+    const rootProperties = getRootProperties(buildOptions);
     const groupByKey = groupBy || rootProperties[0] || undefined;
-    const exclude = Array.isArray(buildOptions.exclude) ? buildOptions.exclude : (buildOptions.exclude ? [buildOptions.exclude] : []);
-    const include = Array.isArray(buildOptions.include) ? buildOptions.include : (buildOptions.include ? [buildOptions.include] : []);
-    const values = {};
-    for (const p of rootProperties) {
-        values[p] = buildOptions[p];
-    }
+    const exclude = getArrayOrEmpty(buildOptions.exclude);
+    const include = getArrayOrEmpty(buildOptions.include);
+    const values = getValuesForProperties(rootProperties, buildOptions);
     if (rootProperties.length === 0 && Array.isArray(buildOptions.include)) {
         const jobs = include.filter(job => !matchesExclusion(job, exclude));
         return {
@@ -25732,14 +25729,7 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
                     const job = { ...inc, [groupByKey]: groupValue };
                     if (!matchesExclusion(job, exclude)) {
                         if (!job.name) {
-                            const keys = Object.keys(job).filter(k => k !== 'name' && k !== groupByKey);
-                            const osIndex = keys.indexOf('os');
-                            if (osIndex > -1) {
-                                keys.splice(osIndex, 1);
-                                keys.unshift('os');
-                            }
-                            const nameParts = keys.map(k => job[k]);
-                            job.name = nameParts.join(' ');
+                            job.name = buildJobName(job, groupByKey, Object.keys(job));
                         }
                         groupJobs.push(job);
                     }
@@ -25794,18 +25784,49 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
         name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${group}` : group,
         matrix: {
             include: jobs,
-        },
+        }
     }));
     return { jobs: jobsArray };
 }
+function getRootProperties(buildOptions) {
+    return Object.keys(buildOptions).filter(key => key !== 'exclude' && key !== 'include' && Array.isArray(buildOptions[key]));
+}
+function getArrayOrEmpty(value) {
+    if (Array.isArray(value)) {
+        return value;
+    }
+    if (value) {
+        return [value];
+    }
+    return [];
+}
+function getValuesForProperties(props, buildOptions) {
+    const values = {};
+    for (const p of props) {
+        values[p] = buildOptions[p];
+    }
+    return values;
+}
+function buildJobName(job, groupByKey, keys) {
+    const filteredKeys = keys.filter(k => k !== 'name' && k !== groupByKey);
+    const osIndex = filteredKeys.indexOf('os');
+    if (osIndex > -1) {
+        filteredKeys.splice(osIndex, 1);
+        filteredKeys.unshift('os');
+    }
+    const nameParts = filteredKeys.map(k => job[k]);
+    return nameParts.join(' ');
+}
 function matchesExclusion(job, exclude) {
-    if (!exclude)
+    if (!exclude) {
         return false;
+    }
     return exclude.some(rule => Object.entries(rule).every(([k, v]) => job[k] === v));
 }
 function getCombinations(props, values) {
-    if (props.length === 0)
+    if (props.length === 0) {
         return [{}];
+    }
     const [first, ...rest] = props;
     const restComb = getCombinations(rest, values);
     const result = [];
