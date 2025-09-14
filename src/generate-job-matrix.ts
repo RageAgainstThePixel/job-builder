@@ -14,11 +14,12 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
 
     if (rootProperties.length === 0 && Array.isArray(buildOptions.include)) {
         const jobs = include.filter(job => !matchesExclusion(job, exclude));
+        const dedupedJobs = filterUniqueJobs(jobs);
         return {
             jobs: [
                 {
                     name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? jobNamePrefix : 'job',
-                    matrix: { include: jobs }
+                    matrix: { include: dedupedJobs }
                 }
             ]
         };
@@ -52,9 +53,10 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
                     }
                 }
 
+                const dedupedGroupJobs = filterUniqueJobs(groupJobs);
                 jobsArray.push({
                     name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${groupValue}` : groupValue,
-                    matrix: { include: groupJobs },
+                    matrix: { include: dedupedGroupJobs },
                 });
             }
 
@@ -120,9 +122,24 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
     const jobsArray: Array<Job> = Object.entries(jobs).map(([group, jobs]) => ({
         name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${group}` : group,
         matrix: {
-            include: jobs,
+            include: filterUniqueJobs(jobs),
         }
     }));
+
+    // Filter jobs to ensure uniqueness by stringifying their properties
+    function filterUniqueJobs(jobs: Array<Record<string, any>>): Array<Record<string, any>> {
+        const seen = new Set<string>();
+        return jobs.filter(job => {
+            const key = JSON.stringify(job);
+
+            if (seen.has(key)) {
+                return false;
+            }
+
+            seen.add(key);
+            return true;
+        });
+    }
 
     return { jobs: jobsArray };
 }

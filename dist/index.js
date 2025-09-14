@@ -25658,11 +25658,12 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
     const values = getValuesForProperties(rootProperties, buildOptions);
     if (rootProperties.length === 0 && Array.isArray(buildOptions.include)) {
         const jobs = include.filter(job => !matchesExclusion(job, exclude));
+        const dedupedJobs = filterUniqueJobs(jobs);
         return {
             jobs: [
                 {
                     name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? jobNamePrefix : 'job',
-                    matrix: { include: jobs }
+                    matrix: { include: dedupedJobs }
                 }
             ]
         };
@@ -25684,9 +25685,10 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
                         groupJobs.push(job);
                     }
                 }
+                const dedupedGroupJobs = filterUniqueJobs(groupJobs);
                 jobsArray.push({
                     name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${groupValue}` : groupValue,
-                    matrix: { include: groupJobs },
+                    matrix: { include: dedupedGroupJobs },
                 });
             }
             return { jobs: jobsArray };
@@ -25733,9 +25735,20 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
     const jobsArray = Object.entries(jobs).map(([group, jobs]) => ({
         name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${group}` : group,
         matrix: {
-            include: jobs,
+            include: filterUniqueJobs(jobs),
         }
     }));
+    function filterUniqueJobs(jobs) {
+        const seen = new Set();
+        return jobs.filter(job => {
+            const key = JSON.stringify(job);
+            if (seen.has(key)) {
+                return false;
+            }
+            seen.add(key);
+            return true;
+        });
+    }
     return { jobs: jobsArray };
 }
 function getRootProperties(buildOptions) {
