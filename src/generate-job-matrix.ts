@@ -126,22 +126,29 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
         }
     }));
 
-    // Filter jobs to ensure uniqueness by stringifying their properties
-    function filterUniqueJobs(jobs: Array<Record<string, any>>): Array<Record<string, any>> {
-        const seen = new Set<string>();
-        return jobs.filter(job => {
-            const key = JSON.stringify(job);
-
-            if (seen.has(key)) {
-                return false;
-            }
-
-            seen.add(key);
-            return true;
-        });
-    }
-
     return { jobs: jobsArray };
+}
+
+// Filter jobs to ensure uniqueness by stringifying their properties
+function filterUniqueJobs(jobs: Array<Record<string, any>>): Array<Record<string, any>> {
+    const seen = new Set<string>();
+    return jobs.filter(job => {
+        // Normalize job object by sorting keys
+        const sortedKeys = Object.keys(job).sort();
+        const normalizedJob: Record<string, any> = {};
+
+        for (const k of sortedKeys) {
+            normalizedJob[k] = job[k];
+        }
+
+        const key = JSON.stringify(normalizedJob);
+
+        if (seen.has(key)) {
+            return false;
+        }
+        seen.add(key);
+        return true;
+    });
 }
 
 function getRootProperties(buildOptions: BuildOptions): string[] {

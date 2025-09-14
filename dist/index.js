@@ -25738,18 +25738,23 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
             include: filterUniqueJobs(jobs),
         }
     }));
-    function filterUniqueJobs(jobs) {
-        const seen = new Set();
-        return jobs.filter(job => {
-            const key = JSON.stringify(job);
-            if (seen.has(key)) {
-                return false;
-            }
-            seen.add(key);
-            return true;
-        });
-    }
     return { jobs: jobsArray };
+}
+function filterUniqueJobs(jobs) {
+    const seen = new Set();
+    return jobs.filter(job => {
+        const sortedKeys = Object.keys(job).sort();
+        const normalizedJob = {};
+        for (const k of sortedKeys) {
+            normalizedJob[k] = job[k];
+        }
+        const key = JSON.stringify(normalizedJob);
+        if (seen.has(key)) {
+            return false;
+        }
+        seen.add(key);
+        return true;
+    });
 }
 function getRootProperties(buildOptions) {
     return Object.keys(buildOptions).filter(key => key !== 'exclude' && key !== 'include' && Array.isArray(buildOptions[key]));
