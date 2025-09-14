@@ -25658,11 +25658,12 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
     const values = getValuesForProperties(rootProperties, buildOptions);
     if (rootProperties.length === 0 && Array.isArray(buildOptions.include)) {
         const jobs = include.filter(job => !matchesExclusion(job, exclude));
+        const dedupedJobs = filterUniqueJobs(jobs);
         return {
             jobs: [
                 {
                     name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? jobNamePrefix : 'job',
-                    matrix: { include: jobs }
+                    matrix: { include: dedupedJobs }
                 }
             ]
         };
@@ -25684,9 +25685,10 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
                         groupJobs.push(job);
                     }
                 }
+                const dedupedGroupJobs = filterUniqueJobs(groupJobs);
                 jobsArray.push({
                     name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${groupValue}` : groupValue,
-                    matrix: { include: groupJobs },
+                    matrix: { include: dedupedGroupJobs },
                 });
             }
             return { jobs: jobsArray };
@@ -25733,10 +25735,28 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
     const jobsArray = Object.entries(jobs).map(([group, jobs]) => ({
         name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${group}` : group,
         matrix: {
-            include: jobs,
+            include: filterUniqueJobs(jobs),
         }
     }));
     return { jobs: jobsArray };
+}
+function filterUniqueJobs(jobs) {
+    const jobMap = new Map();
+    for (const job of jobs) {
+        const keyParts = [];
+        for (const k of Object.keys(job).sort()) {
+            const v = job[k];
+            const t = typeof v;
+            if (t === 'string' || t === 'number' || t === 'boolean') {
+                keyParts.push(`${k}:${v}`);
+            }
+        }
+        const key = keyParts.join('|');
+        if (!jobMap.has(key)) {
+            jobMap.set(key, job);
+        }
+    }
+    return Array.from(jobMap.values());
 }
 function getRootProperties(buildOptions) {
     return Object.keys(buildOptions).filter(key => key !== 'exclude' && key !== 'include' && Array.isArray(buildOptions[key]));
