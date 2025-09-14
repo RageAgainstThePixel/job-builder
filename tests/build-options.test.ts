@@ -9,6 +9,29 @@ import {
 } from '../src/types';
 
 describe('build-options source/expected pairs', () => {
+    it('should produce only unique jobs in matrix', () => {
+        const buildOptions: BuildOptions = {
+            include: [
+                { os: 'ubuntu-latest', 'build-targets': 'None', modules: 'None', 'unity-version': 'None', name: 'ubuntu-latest None None' },
+                { os: 'ubuntu-latest', 'build-targets': 'None', modules: 'None', 'unity-version': 'None', name: 'ubuntu-latest None None' },
+                { os: 'windows-latest', 'build-targets': 'None', modules: 'None', 'unity-version': 'None', name: 'windows-latest None None' },
+                { os: 'macos-latest', 'build-targets': 'None', modules: 'None', 'unity-version': 'None', name: 'macos-latest None None' },
+            ]
+        };
+        const result: JobMatrix = generateJobsMatrix(buildOptions, undefined, undefined);
+        const jobs = result.jobs[0].matrix.include;
+        // Build keys for each job using primitive properties
+        const keys = jobs.map(job => {
+            return Object.keys(job).sort().map(k => {
+                const v = job[k];
+                const t = typeof v;
+                return (t === 'string' || t === 'number' || t === 'boolean') ? `${k}:${v}` : '';
+            }).filter(Boolean).join('|');
+        });
+        // Check for duplicates
+        const uniqueKeys = new Set(keys);
+        expect(uniqueKeys.size).toBe(jobs.length);
+    });
     const sourceDir = path.resolve(__dirname, 'source');
     const expectedDir = path.resolve(__dirname, 'expected');
 

@@ -131,24 +131,22 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
 
 // Filter jobs to ensure uniqueness by stringifying their properties
 function filterUniqueJobs(jobs: Array<Record<string, any>>): Array<Record<string, any>> {
-    const seen = new Set<string>();
-    return jobs.filter(job => {
-        // Normalize job object by sorting keys
-        const sortedKeys = Object.keys(job).sort();
-        const normalizedJob: Record<string, any> = {};
-
-        for (const k of sortedKeys) {
-            normalizedJob[k] = job[k];
+    const jobMap = new Map<string, Record<string, any>>();
+    for (const job of jobs) {
+        const keyParts: string[] = [];
+        for (const k of Object.keys(job).sort()) {
+            const v = job[k];
+            const t = typeof v;
+            if (t === 'string' || t === 'number' || t === 'boolean') {
+                keyParts.push(`${k}:${v}`);
+            }
         }
-
-        const key = JSON.stringify(normalizedJob);
-
-        if (seen.has(key)) {
-            return false;
+        const key = keyParts.join('|');
+        if (!jobMap.has(key)) {
+            jobMap.set(key, job);
         }
-        seen.add(key);
-        return true;
-    });
+    }
+    return Array.from(jobMap.values());
 }
 
 function getRootProperties(buildOptions: BuildOptions): string[] {

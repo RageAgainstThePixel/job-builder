@@ -25741,20 +25741,22 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
     return { jobs: jobsArray };
 }
 function filterUniqueJobs(jobs) {
-    const seen = new Set();
-    return jobs.filter(job => {
-        const sortedKeys = Object.keys(job).sort();
-        const normalizedJob = {};
-        for (const k of sortedKeys) {
-            normalizedJob[k] = job[k];
+    const jobMap = new Map();
+    for (const job of jobs) {
+        const keyParts = [];
+        for (const k of Object.keys(job).sort()) {
+            const v = job[k];
+            const t = typeof v;
+            if (t === 'string' || t === 'number' || t === 'boolean') {
+                keyParts.push(`${k}:${v}`);
+            }
         }
-        const key = JSON.stringify(normalizedJob);
-        if (seen.has(key)) {
-            return false;
+        const key = keyParts.join('|');
+        if (!jobMap.has(key)) {
+            jobMap.set(key, job);
         }
-        seen.add(key);
-        return true;
-    });
+    }
+    return Array.from(jobMap.values());
 }
 function getRootProperties(buildOptions) {
     return Object.keys(buildOptions).filter(key => key !== 'exclude' && key !== 'include' && Array.isArray(buildOptions[key]));
