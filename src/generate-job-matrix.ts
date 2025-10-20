@@ -32,7 +32,13 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
     if (include.length > 0 && rootProperties.length > 0 && groupByKey) {
         const otherProps = rootProperties.filter(p => p !== groupByKey);
         const allIncludeCoverOtherProps = include.every(inc =>
-            otherProps.every(p => Object.prototype.hasOwnProperty.call(inc, p))
+            otherProps.every(p => {
+                if (Object.prototype.hasOwnProperty.call(inc, p)) {
+                    return true;
+                }
+                const propValues = values[p];
+                return Array.isArray(propValues) && propValues.length === 1;
+            })
         );
 
         if (allIncludeCoverOtherProps) {
@@ -44,6 +50,15 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
 
                 for (const inc of include) {
                     const job = { ...inc, [groupByKey]: groupValue };
+
+                    for (const prop of otherProps) {
+                        if (!Object.prototype.hasOwnProperty.call(job, prop)) {
+                            const propValues = values[prop];
+                            if (Array.isArray(propValues) && propValues.length === 1) {
+                                job[prop] = propValues[0];
+                            }
+                        }
+                    }
 
                     if (!matchesExclusion(job, exclude)) {
                         if (!job.name) {
@@ -169,8 +184,15 @@ function getValuesForProperties(props: string[], buildOptions: BuildOptions): Re
     return values;
 }
 
+function hasValidCharacters(input: string): boolean {
+    if (input === null || input === undefined) { return false; }
+    if (input.trim().length === 0) { return false; }
+    const invalidChars = ['/', '\\', ':', '*', '?', '"', '<', '>', '|'];
+    return !invalidChars.some(char => input.includes(char));
+}
+
 function buildJobName(job: Record<string, string>, groupByKey: string, keys: string[]): string {
-    const filteredKeys = keys.filter(k => k !== 'name' && k !== groupByKey);
+    const filteredKeys = keys.filter(k => k !== 'name' && k !== groupByKey && hasValidCharacters(job[k]));
     const osIndex = filteredKeys.indexOf('os');
     if (osIndex > -1) {
         filteredKeys.splice(osIndex, 1);

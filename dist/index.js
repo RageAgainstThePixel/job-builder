@@ -25670,7 +25670,13 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
     }
     if (include.length > 0 && rootProperties.length > 0 && groupByKey) {
         const otherProps = rootProperties.filter(p => p !== groupByKey);
-        const allIncludeCoverOtherProps = include.every(inc => otherProps.every(p => Object.prototype.hasOwnProperty.call(inc, p)));
+        const allIncludeCoverOtherProps = include.every(inc => otherProps.every(p => {
+            if (Object.prototype.hasOwnProperty.call(inc, p)) {
+                return true;
+            }
+            const propValues = values[p];
+            return Array.isArray(propValues) && propValues.length === 1;
+        }));
         if (allIncludeCoverOtherProps) {
             const groupByValues = values[groupByKey] || [];
             const jobsArray = [];
@@ -25678,6 +25684,14 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
                 const groupJobs = [];
                 for (const inc of include) {
                     const job = { ...inc, [groupByKey]: groupValue };
+                    for (const prop of otherProps) {
+                        if (!Object.prototype.hasOwnProperty.call(job, prop)) {
+                            const propValues = values[prop];
+                            if (Array.isArray(propValues) && propValues.length === 1) {
+                                job[prop] = propValues[0];
+                            }
+                        }
+                    }
                     if (!matchesExclusion(job, exclude)) {
                         if (!job.name) {
                             job.name = buildJobName(job, groupByKey, Object.keys(job));
@@ -25777,8 +25791,18 @@ function getValuesForProperties(props, buildOptions) {
     }
     return values;
 }
+function hasValidCharacters(input) {
+    if (input === null || input === undefined) {
+        return false;
+    }
+    if (input.trim().length === 0) {
+        return false;
+    }
+    const invalidChars = ['/', '\\', ':', '*', '?', '"', '<', '>', '|'];
+    return !invalidChars.some(char => input.includes(char));
+}
 function buildJobName(job, groupByKey, keys) {
-    const filteredKeys = keys.filter(k => k !== 'name' && k !== groupByKey);
+    const filteredKeys = keys.filter(k => k !== 'name' && k !== groupByKey && hasValidCharacters(job[k]));
     const osIndex = filteredKeys.indexOf('os');
     if (osIndex > -1) {
         filteredKeys.splice(osIndex, 1);
@@ -25853,7 +25877,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const fs = __importStar(__nccwpck_require__(7147));
 const generate_job_matrix_1 = __nccwpck_require__(1382);
-const main = async () => {
+async function main() {
     try {
         const buildOptionsPath = core.getInput('build-options', { required: true });
         const buildOptions = JSON.parse(fs.readFileSync(buildOptionsPath, 'utf-8'));
@@ -25866,7 +25890,7 @@ const main = async () => {
     catch (error) {
         core.setFailed(error);
     }
-};
+}
 main();
 
 
