@@ -8,7 +8,7 @@ import {
   generateJobsMatrix
 } from './generate-job-matrix';
 
-const main = async () => {
+async function main() {
   try {
     const buildOptionsPath = core.getInput('build-options', { required: true });
     const buildOptions: BuildOptions = JSON.parse(fs.readFileSync(buildOptionsPath, 'utf-8'));

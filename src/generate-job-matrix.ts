@@ -184,8 +184,15 @@ function getValuesForProperties(props: string[], buildOptions: BuildOptions): Re
     return values;
 }
 
+function hasValidCharacters(input: string): boolean {
+    if (input == null) { return false; }
+    if (input.trim().length === 0) { return false; }
+    const invalidChars = ['/', '\\', ':', '*', '?', '"', '<', '>', '|'];
+    return !invalidChars.some(char => input.includes(char));
+}
+
 function buildJobName(job: Record<string, string>, groupByKey: string, keys: string[]): string {
-    const filteredKeys = keys.filter(k => k !== 'name' && k !== groupByKey && k !== 'build-args');
+    const filteredKeys = keys.filter(k => k !== 'name' && k !== groupByKey && hasValidCharacters(job[k]));
     const osIndex = filteredKeys.indexOf('os');
     if (osIndex > -1) {
         filteredKeys.splice(osIndex, 1);

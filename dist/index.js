@@ -25791,8 +25791,18 @@ function getValuesForProperties(props, buildOptions) {
     }
     return values;
 }
+function hasValidCharacters(input) {
+    if (input == null) {
+        return false;
+    }
+    if (input.trim().length === 0) {
+        return false;
+    }
+    const invalidChars = ['/', '\\', ':', '*', '?', '"', '<', '>', '|'];
+    return !invalidChars.some(char => input.includes(char));
+}
 function buildJobName(job, groupByKey, keys) {
-    const filteredKeys = keys.filter(k => k !== 'name' && k !== groupByKey && k !== 'build-args');
+    const filteredKeys = keys.filter(k => k !== 'name' && k !== groupByKey && hasValidCharacters(job[k]));
     const osIndex = filteredKeys.indexOf('os');
     if (osIndex > -1) {
         filteredKeys.splice(osIndex, 1);
@@ -25867,7 +25877,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const fs = __importStar(__nccwpck_require__(7147));
 const generate_job_matrix_1 = __nccwpck_require__(1382);
-const main = async () => {
+async function main() {
     try {
         const buildOptionsPath = core.getInput('build-options', { required: true });
         const buildOptions = JSON.parse(fs.readFileSync(buildOptionsPath, 'utf-8'));
@@ -25880,7 +25890,7 @@ const main = async () => {
     catch (error) {
         core.setFailed(error);
     }
-};
+}
 main();
 
 
