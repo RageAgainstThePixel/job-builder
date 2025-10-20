@@ -185,7 +185,7 @@ function getValuesForProperties(props: string[], buildOptions: BuildOptions): Re
 }
 
 function hasValidCharacters(input: string): boolean {
-    if (input == null) { return false; }
+    if (input === null || input === undefined) { return false; }
     if (input.trim().length === 0) { return false; }
     const invalidChars = ['/', '\\', ':', '*', '?', '"', '<', '>', '|'];
     return !invalidChars.some(char => input.includes(char));

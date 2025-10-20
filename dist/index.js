@@ -25792,7 +25792,7 @@ function getValuesForProperties(props, buildOptions) {
     return values;
 }
 function hasValidCharacters(input) {
-    if (input == null) {
+    if (input === null || input === undefined) {
         return false;
     }
     if (input.trim().length === 0) {
