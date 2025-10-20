@@ -1,0 +1,249 @@
+{
+  "jobs": [
+    {
+      "name": "2021",
+      "matrix": {
+        "include": [
+          {
+            "name": "ubuntu-latest StandaloneLinux64",
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "2021",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "ubuntu-latest WebGL",
+            "os": "ubuntu-latest",
+            "build-target": "WebGL",
+            "unity-version": "2021",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "ubuntu-latest Android",
+            "os": "ubuntu-latest",
+            "build-target": "Android",
+            "unity-version": "2021",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "windows-latest StandaloneWindows64",
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "2021",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "macos-latest StandaloneOSX",
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "2021",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "macos-latest iOS",
+            "os": "macos-latest",
+            "build-target": "iOS",
+            "unity-version": "2021",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          }
+        ]
+      }
+    },
+    {
+      "name": "2022",
+      "matrix": {
+        "include": [
+          {
+            "name": "ubuntu-latest StandaloneLinux64",
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "2022",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "ubuntu-latest WebGL",
+            "os": "ubuntu-latest",
+            "build-target": "WebGL",
+            "unity-version": "2022",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "ubuntu-latest Android",
+            "os": "ubuntu-latest",
+            "build-target": "Android",
+            "unity-version": "2022",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "windows-latest StandaloneWindows64",
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "2022",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "macos-latest StandaloneOSX",
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "2022",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "macos-latest iOS",
+            "os": "macos-latest",
+            "build-target": "iOS",
+            "unity-version": "2022",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          }
+        ]
+      }
+    },
+    {
+      "name": "6000.0",
+      "matrix": {
+        "include": [
+          {
+            "name": "ubuntu-latest StandaloneLinux64",
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "6000.0",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "ubuntu-latest WebGL",
+            "os": "ubuntu-latest",
+            "build-target": "WebGL",
+            "unity-version": "6000.0",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "ubuntu-latest Android",
+            "os": "ubuntu-latest",
+            "build-target": "Android",
+            "unity-version": "6000.0",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "windows-latest StandaloneWindows64",
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "6000.0",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "macos-latest StandaloneOSX",
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "6000.0",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "macos-latest iOS",
+            "os": "macos-latest",
+            "build-target": "iOS",
+            "unity-version": "6000.0",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          }
+        ]
+      }
+    },
+    {
+      "name": "6000.1",
+      "matrix": {
+        "include": [
+          {
+            "name": "ubuntu-latest StandaloneLinux64",
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "6000.1",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "ubuntu-latest WebGL",
+            "os": "ubuntu-latest",
+            "build-target": "WebGL",
+            "unity-version": "6000.1",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "ubuntu-latest Android",
+            "os": "ubuntu-latest",
+            "build-target": "Android",
+            "unity-version": "6000.1",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "windows-latest StandaloneWindows64",
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "6000.1",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "macos-latest StandaloneOSX",
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "6000.1",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "macos-latest iOS",
+            "os": "macos-latest",
+            "build-target": "iOS",
+            "unity-version": "6000.1",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          }
+        ]
+      }
+    },
+    {
+      "name": "6000.2",
+      "matrix": {
+        "include": [
+          {
+            "name": "ubuntu-latest StandaloneLinux64",
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "6000.2",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "ubuntu-latest WebGL",
+            "os": "ubuntu-latest",
+            "build-target": "WebGL",
+            "unity-version": "6000.2",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "ubuntu-latest Android",
+            "os": "ubuntu-latest",
+            "build-target": "Android",
+            "unity-version": "6000.2",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "windows-latest StandaloneWindows64",
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "6000.2",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "macos-latest StandaloneOSX",
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "6000.2",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          },
+          {
+            "name": "macos-latest iOS",
+            "os": "macos-latest",
+            "build-target": "iOS",
+            "unity-version": "6000.2",
+            "build-args": "-sceneList Assets/Samples/Demo/Scene.unity"
+          }
+        ]
+      }
+    }
+  ]
+}
