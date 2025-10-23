@@ -134,6 +134,79 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
         jobs[group].push(job);
     }
 
+    // Ensure include entries that specify root property values outside the
+    // defined values arrays are still added — but only when those external
+    // values are sentinel-like and intentionally present across all groups.
+    // We detect sentinel external values dynamically: an external value is a
+    // candidate if it appears in include entries for every possible
+    // groupBy value. This avoids re-adding arbitrary one-off versions that
+    // are meant for a single group only.
+    const groupByValues: string[] = (values[groupByKey as string] && Array.isArray(values[groupByKey as string]) && values[groupByKey as string].length > 0)
+        ? values[groupByKey as string]
+        : Array.from(new Set(include.map(inc => inc[groupByKey as string]).filter(Boolean)));
+
+    // Map of external key ("prop:::value") -> set of groupBy values it appears in
+    const externalOccurrence: Record<string, Set<string>> = {};
+    for (const inc of include) {
+        const groupVal = inc && typeof inc === 'object' ? inc[groupByKey as string] : undefined;
+        if (!groupVal) { continue; }
+        for (const p of rootProperties) {
+            if (Object.prototype.hasOwnProperty.call(inc, p)) {
+                const v = inc[p];
+                const known = values[p] || [];
+                if (!known.includes(v)) {
+                    const key = `${p}:::${v}`;
+                    if (!externalOccurrence[key]) { externalOccurrence[key] = new Set<string>(); }
+                    externalOccurrence[key].add(String(groupVal));
+                }
+            }
+        }
+    }
+
+    // Determine which external keys are present for every groupBy value —
+    // these are treated as sentinel external values to re-add.
+    const sentinelExternalKeys = new Set<string>(Object.entries(externalOccurrence)
+        .filter(([_, groupSet]) => groupSet.size === groupByValues.length)
+        .map(([k]) => k));
+
+    for (const inc of include) {
+        // Determine the group from the include entry (must be present)
+        const groupFromInc = inc && typeof inc === 'object' ? inc[groupByKey as string] : undefined;
+        if (!groupFromInc) { continue; }
+
+        // Collect external key identifiers for this include (prop:::value)
+        const externalKeys: string[] = [];
+        for (const p of rootProperties) {
+            if (Object.prototype.hasOwnProperty.call(inc, p)) {
+                const v = inc[p];
+                const known = values[p] || [];
+                if (!known.includes(v)) {
+                    externalKeys.push(`${p}:::${v}`);
+                }
+            }
+        }
+
+        // If there are no external keys, this include was already handled
+        // by combination logic above.
+        if (externalKeys.length === 0) { continue; }
+
+        // Only re-add this include if every external key for it is a sentinel
+        // (appears across all groups). This prevents adding one-off versions.
+        if (externalKeys.some(k => !sentinelExternalKeys.has(k))) { continue; }
+
+        // Build job entry from include rule. Fill a name if missing.
+        const jobEntry: Record<string, any> = { ...inc };
+        if (!jobEntry.name) {
+            jobEntry.name = buildJobName(jobEntry, groupByKey as string, Object.keys(jobEntry));
+        }
+
+        if (matchesExclusion(jobEntry, exclude)) { continue; }
+        if (!jobs[groupFromInc]) { jobs[groupFromInc] = []; }
+        // Put sentinel include entries at the front so they appear before the
+        // generated combination entries (matches expected ordering).
+        jobs[groupFromInc].unshift(jobEntry);
+    }
+
     const jobsArray: Array<Job> = Object.entries(jobs).map(([group, jobs]) => ({
         name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${group}` : group,
         matrix: {

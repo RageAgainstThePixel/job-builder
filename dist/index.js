@@ -25746,6 +25746,65 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
         }
         jobs[group].push(job);
     }
+    const groupByValues = (values[groupByKey] && Array.isArray(values[groupByKey]) && values[groupByKey].length > 0)
+        ? values[groupByKey]
+        : Array.from(new Set(include.map(inc => inc[groupByKey]).filter(Boolean)));
+    const externalOccurrence = {};
+    for (const inc of include) {
+        const groupVal = inc && typeof inc === 'object' ? inc[groupByKey] : undefined;
+        if (!groupVal) {
+            continue;
+        }
+        for (const p of rootProperties) {
+            if (Object.prototype.hasOwnProperty.call(inc, p)) {
+                const v = inc[p];
+                const known = values[p] || [];
+                if (!known.includes(v)) {
+                    const key = `${p}:::${v}`;
+                    if (!externalOccurrence[key]) {
+                        externalOccurrence[key] = new Set();
+                    }
+                    externalOccurrence[key].add(String(groupVal));
+                }
+            }
+        }
+    }
+    const sentinelExternalKeys = new Set(Object.entries(externalOccurrence)
+        .filter(([_, groupSet]) => groupSet.size === groupByValues.length)
+        .map(([k]) => k));
+    for (const inc of include) {
+        const groupFromInc = inc && typeof inc === 'object' ? inc[groupByKey] : undefined;
+        if (!groupFromInc) {
+            continue;
+        }
+        const externalKeys = [];
+        for (const p of rootProperties) {
+            if (Object.prototype.hasOwnProperty.call(inc, p)) {
+                const v = inc[p];
+                const known = values[p] || [];
+                if (!known.includes(v)) {
+                    externalKeys.push(`${p}:::${v}`);
+                }
+            }
+        }
+        if (externalKeys.length === 0) {
+            continue;
+        }
+        if (externalKeys.some(k => !sentinelExternalKeys.has(k))) {
+            continue;
+        }
+        const jobEntry = { ...inc };
+        if (!jobEntry.name) {
+            jobEntry.name = buildJobName(jobEntry, groupByKey, Object.keys(jobEntry));
+        }
+        if (matchesExclusion(jobEntry, exclude)) {
+            continue;
+        }
+        if (!jobs[groupFromInc]) {
+            jobs[groupFromInc] = [];
+        }
+        jobs[groupFromInc].unshift(jobEntry);
+    }
     const jobsArray = Object.entries(jobs).map(([group, jobs]) => ({
         name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${group}` : group,
         matrix: {
