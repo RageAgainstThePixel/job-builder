@@ -45,7 +45,8 @@ describe('build-options source/expected pairs', () => {
             { prefix: 'unity-setup', groupBy: 'os' },
             { prefix: 'unity-upm', groupBy: 'unity-version' },
             { prefix: 'include-only' },
-            { prefix: 'insert', groupBy: 'unity-version' }
+            { prefix: 'insert', groupBy: 'unity-version' },
+            { prefix: 'all-versions', groupBy: 'unity-version', jobNamePrefix: 'Build' },
             // Add more test cases here as needed
         ];
 

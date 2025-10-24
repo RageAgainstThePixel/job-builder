@@ -11,6 +11,12 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
     const exclude: Array<Record<string, string>> = getArrayOrEmpty(buildOptions.exclude);
     const include: Array<Record<string, string>> = getArrayOrEmpty(buildOptions.include);
     const values: Record<string, string[]> = getValuesForProperties(rootProperties, buildOptions);
+    let includeDefinesGroup = false;
+    if (groupByKey) {
+        includeDefinesGroup = include.some(inc =>
+            inc && typeof inc === 'object' && Object.prototype.hasOwnProperty.call(inc, groupByKey)
+        );
+    }
 
     if (rootProperties.length === 0 && Array.isArray(buildOptions.include)) {
         const jobs = include.filter(job => !matchesExclusion(job, exclude));
@@ -29,7 +35,7 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
     // - include is present
     // - rootProperties.length > 0
     // - all include entries cover all rootProperties except one (the groupByKey)
-    if (include.length > 0 && rootProperties.length > 0 && groupByKey) {
+    if (include.length > 0 && rootProperties.length > 0 && groupByKey && !includeDefinesGroup) {
         const otherProps = rootProperties.filter(p => p !== groupByKey);
         const allIncludeCoverOtherProps = include.every(inc =>
             otherProps.every(p => {
@@ -80,139 +86,224 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
     }
 
     const combinations: Array<Record<string, string>> = getCombinations(rootProperties, values);
-    const jobs: Record<string, any[]> = {};
+    const jobsByGroup = new Map<string, Array<Record<string, any>>>();
+    const groupInsertionOrder: string[] = [];
 
     for (const combination of combinations) {
-        let includeProps = {};
+        const matchingIncludes = include.filter(rule =>
+            Object.entries(rule).every(([k, v]) =>
+                combination[k] === undefined || combination[k] === v
+            ));
 
-        if (include.length > 0) {
-            const matchingIncludes = include.filter(rule =>
-                Object.entries(rule).every(([k, v]) =>
-                    combination[k] === undefined || combination[k] === v
-                ));
+        const candidates: Array<{ job: Record<string, any>, rule?: Record<string, any> }> = [];
 
+        if (matchingIncludes.length > 0) {
             for (const rule of matchingIncludes) {
-                includeProps = { ...includeProps, ...rule };
+                candidates.push({ job: { ...combination, ...rule }, rule });
             }
+        } else if (include.length === 0) {
+            candidates.push({ job: { ...combination } });
         }
 
-        let jobName = rootProperties
-            .filter(p => (groupByKey !== undefined && p !== groupByKey) && values[p].length > 1)
-            .map(p => combination[p])
-            .join(' ');
+        for (const { job: candidate, rule } of candidates) {
+            if (groupByKey && candidate[groupByKey] === undefined) {
+                candidate[groupByKey] = combination[groupByKey];
+            }
 
-        const includeKeys = Object.keys(includeProps);
+            if (matchesExclusion(candidate, exclude)) {
+                continue;
+            }
 
-        if (jobName === combination.os && includeKeys.length > 0) {
-            jobName = `${includeKeys.map(k => `${includeProps[k]}`).join(' ')}`;
+            let jobName: string | undefined = typeof candidate.name === 'string' ? candidate.name : undefined;
+            if (!jobName) {
+                const baseName = rootProperties
+                    .filter(p => (groupByKey !== undefined && p !== groupByKey) && values[p].length > 1)
+                    .map(p => combination[p])
+                    .join(' ');
+
+                jobName = baseName;
+
+                const includeKeys = rule ? Object.keys(rule) : [];
+                if (baseName === combination.os && includeKeys.length > 0) {
+                    jobName = includeKeys.map(key => String(candidate[key])).join(' ');
+                }
+
+                if (!jobName || jobName.trim().length === 0) {
+                    jobName = buildJobName(candidate, groupByKey || '', Object.keys(candidate));
+                }
+            }
+
+            const job = { ...candidate, name: jobName };
+
+            if (groupByKey === undefined) {
+                throw new Error(`Group '${groupByKey}' is undefined for job: ${JSON.stringify(job)}`);
+            }
+
+            const groupValue = job[groupByKey];
+            if (groupValue === undefined) {
+                throw new Error(`Group '${groupByKey}' is undefined for job: ${JSON.stringify(job)}`);
+            }
+
+            const group = String(groupValue);
+            if (!jobsByGroup.has(group)) {
+                jobsByGroup.set(group, []);
+                groupInsertionOrder.push(group);
+            }
+
+            jobsByGroup.get(group)!.push(job);
         }
-
-        const job = {
-            name: jobName,
-            ...combination,
-            ...includeProps,
-        };
-
-        if (matchesExclusion(job, exclude)) {
-            continue;
-        }
-
-        let group = combination[groupByKey];
-
-        if (group === undefined && includeProps && includeProps[groupByKey]) {
-            group = includeProps[groupByKey];
-        }
-
-        if (group === undefined) {
-            throw new Error(`Group '${groupByKey}' is undefined for job: ${JSON.stringify(job)}`);
-        }
-
-        if (!jobs[group]) {
-            jobs[group] = [];
-        }
-
-        jobs[group].push(job);
     }
+    const jobsArray: Array<Job> = [];
+    const appendedGroups = new Set<string>();
 
-    // Ensure include entries that specify root property values outside the
-    // defined values arrays are still added — but only when those external
-    // values are sentinel-like and intentionally present across all groups.
-    // We detect sentinel external values dynamically: an external value is a
-    // candidate if it appears in include entries for every possible
-    // groupBy value. This avoids re-adding arbitrary one-off versions that
-    // are meant for a single group only.
-    const groupByValues: string[] = (values[groupByKey as string] && Array.isArray(values[groupByKey as string]) && values[groupByKey as string].length > 0)
-        ? values[groupByKey as string]
-        : Array.from(new Set(include.map(inc => inc[groupByKey as string]).filter(Boolean)));
+    let knownGroupOrder: string[] | undefined;
+    if (groupByKey && Array.isArray(values[groupByKey])) {
+        knownGroupOrder = values[groupByKey] as string[];
+    }
+    const knownGroupSet = new Set<string>(knownGroupOrder ?? []);
+    const sentinelGroups = new Map<string, Array<Record<string, any>>>();
 
-    // Map of external key ("prop:::value") -> set of groupBy values it appears in
-    const externalOccurrence: Record<string, Set<string>> = {};
-    for (const inc of include) {
-        const groupVal = inc && typeof inc === 'object' ? inc[groupByKey as string] : undefined;
-        if (!groupVal) { continue; }
-        for (const p of rootProperties) {
-            if (Object.prototype.hasOwnProperty.call(inc, p)) {
-                const v = inc[p];
-                const known = values[p] || [];
-                if (!known.includes(v)) {
-                    const key = `${p}:::${v}`;
-                    if (!externalOccurrence[key]) { externalOccurrence[key] = new Set<string>(); }
-                    externalOccurrence[key].add(String(groupVal));
+    if (groupByKey) {
+        const groupKey = groupByKey;
+        const externalGroupOrder: string[] = [];
+        const externalGroups = new Map<string, Array<Record<string, any>>>();
+
+        const groupValuesForSentinel: string[] = knownGroupOrder ?? Array.from(new Set(
+            include
+                .map(inc => (inc && typeof inc === 'object' ? inc[groupKey] : undefined))
+                .filter((val): val is string => Boolean(val))
+        ));
+
+        const externalOccurrence = new Map<string, Set<string>>();
+        for (const inc of include) {
+            if (!inc || typeof inc !== 'object') { continue; }
+            const groupVal = inc[groupKey];
+            if (!groupVal) { continue; }
+
+            for (const prop of rootProperties) {
+                if (!Object.prototype.hasOwnProperty.call(inc, prop)) { continue; }
+                const propValues = values[prop] || [];
+                const propValue = inc[prop];
+                if (!propValues.includes(propValue)) {
+                    const key = `${prop}:::${propValue}`;
+                    if (!externalOccurrence.has(key)) {
+                        externalOccurrence.set(key, new Set<string>());
+                    }
+                    externalOccurrence.get(key)!.add(String(groupVal));
                 }
             }
         }
-    }
 
-    // Determine which external keys are present for every groupBy value —
-    // these are treated as sentinel external values to re-add.
-    const sentinelExternalKeys = new Set<string>(Object.entries(externalOccurrence)
-        .filter(([_, groupSet]) => groupSet.size === groupByValues.length)
-        .map(([k]) => k));
-
-    for (const inc of include) {
-        // Determine the group from the include entry (must be present)
-        const groupFromInc = inc && typeof inc === 'object' ? inc[groupByKey as string] : undefined;
-        if (!groupFromInc) { continue; }
-
-        // Collect external key identifiers for this include (prop:::value)
-        const externalKeys: string[] = [];
-        for (const p of rootProperties) {
-            if (Object.prototype.hasOwnProperty.call(inc, p)) {
-                const v = inc[p];
-                const known = values[p] || [];
-                if (!known.includes(v)) {
-                    externalKeys.push(`${p}:::${v}`);
+        const totalGroupsForSentinel = groupValuesForSentinel.length;
+        const sentinelExternalKeys = new Set<string>();
+        if (totalGroupsForSentinel > 0) {
+            for (const [key, groupSet] of externalOccurrence.entries()) {
+                if (groupSet.size === totalGroupsForSentinel) {
+                    sentinelExternalKeys.add(key);
                 }
             }
         }
 
-        // If there are no external keys, this include was already handled
-        // by combination logic above.
-        if (externalKeys.length === 0) { continue; }
+        for (const inc of include) {
+            if (!inc || typeof inc !== 'object') { continue; }
+            const groupVal = inc[groupKey];
+            if (!groupVal) { continue; }
 
-        // Only re-add this include if every external key for it is a sentinel
-        // (appears across all groups). This prevents adding one-off versions.
-        if (externalKeys.some(k => !sentinelExternalKeys.has(k))) { continue; }
+            const externalKeysForInclude: string[] = [];
+            for (const prop of rootProperties) {
+                if (!Object.prototype.hasOwnProperty.call(inc, prop)) { continue; }
+                const propValues = values[prop] || [];
+                const propValue = inc[prop];
+                if (!propValues.includes(propValue)) {
+                    externalKeysForInclude.push(`${prop}:::${propValue}`);
+                }
+            }
 
-        // Build job entry from include rule. Fill a name if missing.
-        const jobEntry: Record<string, any> = { ...inc };
-        if (!jobEntry.name) {
-            jobEntry.name = buildJobName(jobEntry, groupByKey as string, Object.keys(jobEntry));
+            if (!knownGroupSet.has(groupVal)) {
+                const jobEntry: Record<string, any> = { ...inc, [groupKey]: groupVal };
+                if (!jobEntry.name) {
+                    let generatedName = buildJobName(jobEntry, groupKey, Object.keys(jobEntry));
+                    if ((!generatedName || generatedName.length === 0) && groupVal) {
+                        generatedName = String(groupVal);
+                    } else if (generatedName && groupVal && !generatedName.includes(String(groupVal))) {
+                        generatedName = `${generatedName} ${groupVal}`;
+                    }
+                    jobEntry.name = generatedName;
+                }
+                if (matchesExclusion(jobEntry, exclude)) { continue; }
+
+                if (!externalGroups.has(groupVal)) {
+                    externalGroups.set(groupVal, []);
+                    externalGroupOrder.push(groupVal);
+                }
+                externalGroups.get(groupVal)!.push(jobEntry);
+                continue;
+            }
+
+            if (
+                externalKeysForInclude.length > 0 &&
+                externalKeysForInclude.every(key => sentinelExternalKeys.has(key))
+            ) {
+                const jobEntry: Record<string, any> = { ...inc };
+                if (!Object.prototype.hasOwnProperty.call(jobEntry, groupKey)) {
+                    jobEntry[groupKey] = groupVal;
+                }
+                if (!jobEntry.name) {
+                    jobEntry.name = buildJobName(jobEntry, groupKey, Object.keys(jobEntry));
+                }
+                if (matchesExclusion(jobEntry, exclude)) { continue; }
+
+                if (!sentinelGroups.has(groupVal)) {
+                    sentinelGroups.set(groupVal, []);
+                }
+                sentinelGroups.get(groupVal)!.push(jobEntry);
+            }
         }
 
-        if (matchesExclusion(jobEntry, exclude)) { continue; }
-        if (!jobs[groupFromInc]) { jobs[groupFromInc] = []; }
-        // Put sentinel include entries at the front so they appear before the
-        // generated combination entries (matches expected ordering).
-        jobs[groupFromInc].unshift(jobEntry);
+        for (const groupVal of externalGroupOrder) {
+            const entries = externalGroups.get(groupVal) ?? [];
+            if (entries.length === 0) { continue; }
+            jobsArray.push({
+                name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${groupVal}` : groupVal,
+                matrix: { include: filterUniqueJobs(entries) },
+            });
+            appendedGroups.add(groupVal);
+        }
     }
 
-    const jobsArray: Array<Job> = Object.entries(jobs).map(([group, jobs]) => ({
-        name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${group}` : group,
-        matrix: {
-            include: filterUniqueJobs(jobs),
-        }
-    }));
+    const iterationOrder = knownGroupOrder ?? groupInsertionOrder;
+    for (const group of iterationOrder) {
+        if (appendedGroups.has(group)) { continue; }
+        const groupJobs = jobsByGroup.get(group) ?? [];
+        const sentinel = sentinelGroups.get(group) ?? [];
+        if (groupJobs.length === 0 && sentinel.length === 0) { continue; }
+        const combined = sentinel.length > 0 ? [...sentinel, ...groupJobs] : groupJobs;
+        jobsArray.push({
+            name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${group}` : group,
+            matrix: { include: filterUniqueJobs(combined) },
+        });
+        appendedGroups.add(group);
+    }
+
+    for (const [group, sentinel] of sentinelGroups.entries()) {
+        if (appendedGroups.has(group) || !sentinel || sentinel.length === 0) { continue; }
+        jobsArray.push({
+            name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${group}` : group,
+            matrix: { include: filterUniqueJobs(sentinel) },
+        });
+        appendedGroups.add(group);
+    }
+
+    for (const [group, groupJobs] of jobsByGroup.entries()) {
+        if (appendedGroups.has(group) || !groupJobs || groupJobs.length === 0) { continue; }
+        const sentinel = sentinelGroups.get(group) ?? [];
+        const combined = sentinel.length > 0 ? [...sentinel, ...groupJobs] : groupJobs;
+        jobsArray.push({
+            name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${group}` : group,
+            matrix: { include: filterUniqueJobs(combined) },
+        });
+        appendedGroups.add(group);
+    }
 
     return { jobs: jobsArray };
 }

@@ -1,0 +1,508 @@
+{
+  "jobs": [
+    {
+      "name": "Build none",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "unity-version": "none",
+            "name": "ubuntu-latest none"
+          },
+          {
+            "os": "windows-latest",
+            "unity-version": "none",
+            "name": "windows-latest none"
+          },
+          {
+            "os": "macos-latest",
+            "unity-version": "none",
+            "name": "macos-latest none"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 4.7.2",
+      "matrix": {
+        "include": [
+          {
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "4.7.2",
+            "name": "windows-latest StandaloneWindows64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 5.6.7f1 (e80cc3114ac1)",
+      "matrix": {
+        "include": [
+          {
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "5.6.7f1 (e80cc3114ac1)",
+            "name": "windows-latest StandaloneWindows64"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "5.6.7f1 (e80cc3114ac1)",
+            "name": "macos-latest StandaloneOSX"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 2017",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "2017",
+            "name": "ubuntu-latest StandaloneLinux64"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "WebGL",
+            "build-args": "-colorSpace Gamma",
+            "unity-version": "2017",
+            "name": "ubuntu-latest WebGL -colorSpace Gamma"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "Android",
+            "unity-version": "2017",
+            "name": "ubuntu-latest Android"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "2017",
+            "name": "windows-latest StandaloneWindows64"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "Android",
+            "unity-version": "2017",
+            "name": "windows-latest Android"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "2017",
+            "name": "macos-latest StandaloneOSX"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "iOS",
+            "unity-version": "2017",
+            "name": "macos-latest iOS"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 2018",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "2018",
+            "name": "ubuntu-latest StandaloneLinux64"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "WebGL",
+            "build-args": "-colorSpace Gamma",
+            "unity-version": "2018",
+            "name": "ubuntu-latest WebGL -colorSpace Gamma"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "Android",
+            "unity-version": "2018",
+            "name": "ubuntu-latest Android"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "2018",
+            "name": "windows-latest StandaloneWindows64"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "Android",
+            "unity-version": "2018",
+            "name": "windows-latest Android"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "2018",
+            "name": "macos-latest StandaloneOSX"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "iOS",
+            "unity-version": "2018",
+            "name": "macos-latest iOS"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 2019",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "2019",
+            "name": "ubuntu-latest StandaloneLinux64"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "WebGL",
+            "build-args": "-colorSpace Gamma",
+            "unity-version": "2019",
+            "name": "ubuntu-latest WebGL -colorSpace Gamma"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "Android",
+            "unity-version": "2019",
+            "name": "ubuntu-latest Android"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "2019",
+            "name": "windows-latest StandaloneWindows64"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "Android",
+            "unity-version": "2019",
+            "name": "windows-latest Android"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "2019",
+            "name": "macos-latest StandaloneOSX"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "iOS",
+            "unity-version": "2019",
+            "name": "macos-latest iOS"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 2020",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "2020",
+            "name": "ubuntu-latest StandaloneLinux64"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "WebGL",
+            "build-args": "-colorSpace Gamma",
+            "unity-version": "2020",
+            "name": "ubuntu-latest WebGL -colorSpace Gamma"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "Android",
+            "unity-version": "2020",
+            "name": "ubuntu-latest Android"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "2020",
+            "name": "windows-latest StandaloneWindows64"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "Android",
+            "unity-version": "2020",
+            "name": "windows-latest Android"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "2020",
+            "name": "macos-latest StandaloneOSX"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "iOS",
+            "unity-version": "2020",
+            "name": "macos-latest iOS"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 2021",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "2021",
+            "name": "ubuntu-latest StandaloneLinux64"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "WebGL",
+            "build-args": "-colorSpace Gamma",
+            "unity-version": "2021",
+            "name": "ubuntu-latest WebGL -colorSpace Gamma"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "Android",
+            "unity-version": "2021",
+            "name": "ubuntu-latest Android"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "2021",
+            "name": "windows-latest StandaloneWindows64"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "Android",
+            "unity-version": "2021",
+            "name": "windows-latest Android"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "2021",
+            "name": "macos-latest StandaloneOSX"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "iOS",
+            "unity-version": "2021",
+            "name": "macos-latest iOS"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 2022",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "2022",
+            "name": "ubuntu-latest StandaloneLinux64"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "WebGL",
+            "build-args": "-colorSpace Gamma",
+            "unity-version": "2022",
+            "name": "ubuntu-latest WebGL -colorSpace Gamma"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "Android",
+            "unity-version": "2022",
+            "name": "ubuntu-latest Android"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "2022",
+            "name": "windows-latest StandaloneWindows64"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "Android",
+            "unity-version": "2022",
+            "name": "windows-latest Android"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "2022",
+            "name": "macos-latest StandaloneOSX"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "iOS",
+            "unity-version": "2022",
+            "name": "macos-latest iOS"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 6000.0",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "6000.0",
+            "name": "ubuntu-latest StandaloneLinux64"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "WebGL",
+            "build-args": "-colorSpace Gamma",
+            "unity-version": "6000.0",
+            "name": "ubuntu-latest WebGL -colorSpace Gamma"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "Android",
+            "unity-version": "6000.0",
+            "name": "ubuntu-latest Android"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "6000.0",
+            "name": "windows-latest StandaloneWindows64"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "Android",
+            "unity-version": "6000.0",
+            "name": "windows-latest Android"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "6000.0",
+            "name": "macos-latest StandaloneOSX"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "iOS",
+            "unity-version": "6000.0",
+            "name": "macos-latest iOS"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 6000.1",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "6000.1",
+            "name": "ubuntu-latest StandaloneLinux64"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "WebGL",
+            "build-args": "-colorSpace Gamma",
+            "unity-version": "6000.1",
+            "name": "ubuntu-latest WebGL -colorSpace Gamma"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "Android",
+            "unity-version": "6000.1",
+            "name": "ubuntu-latest Android"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "6000.1",
+            "name": "windows-latest StandaloneWindows64"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "Android",
+            "unity-version": "6000.1",
+            "name": "windows-latest Android"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "6000.1",
+            "name": "macos-latest StandaloneOSX"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "iOS",
+            "unity-version": "6000.1",
+            "name": "macos-latest iOS"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 6000.2",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "build-target": "StandaloneLinux64",
+            "unity-version": "6000.2",
+            "name": "ubuntu-latest StandaloneLinux64"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "WebGL",
+            "build-args": "-colorSpace Gamma",
+            "unity-version": "6000.2",
+            "name": "ubuntu-latest WebGL -colorSpace Gamma"
+          },
+          {
+            "os": "ubuntu-latest",
+            "build-target": "Android",
+            "unity-version": "6000.2",
+            "name": "ubuntu-latest Android"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "StandaloneWindows64",
+            "unity-version": "6000.2",
+            "name": "windows-latest StandaloneWindows64"
+          },
+          {
+            "os": "windows-latest",
+            "build-target": "Android",
+            "unity-version": "6000.2",
+            "name": "windows-latest Android"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "StandaloneOSX",
+            "unity-version": "6000.2",
+            "name": "macos-latest StandaloneOSX"
+          },
+          {
+            "os": "macos-latest",
+            "build-target": "iOS",
+            "unity-version": "6000.2",
+            "name": "macos-latest iOS"
+          }
+        ]
+      }
+    }
+  ]
+}
