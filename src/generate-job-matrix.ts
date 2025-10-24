@@ -136,7 +136,7 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
             const job = { ...candidate, name: jobName };
 
             if (groupByKey === undefined) {
-                throw new Error(`Group '${groupByKey}' is undefined for job: ${JSON.stringify(job)}`);
+                throw new Error(`groupByKey parameter is undefined for job: ${JSON.stringify(job)}`);
             }
 
             const groupValue = job[groupByKey];
