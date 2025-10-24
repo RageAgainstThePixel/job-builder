@@ -25651,11 +25651,16 @@ module.exports = {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.generateJobsMatrix = generateJobsMatrix;
 function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
+    var _a, _b, _c, _d;
     const rootProperties = getRootProperties(buildOptions);
     const groupByKey = groupBy || rootProperties[0] || undefined;
     const exclude = getArrayOrEmpty(buildOptions.exclude);
     const include = getArrayOrEmpty(buildOptions.include);
     const values = getValuesForProperties(rootProperties, buildOptions);
+    let includeDefinesGroup = false;
+    if (groupByKey) {
+        includeDefinesGroup = include.some(inc => inc && typeof inc === 'object' && Object.prototype.hasOwnProperty.call(inc, groupByKey));
+    }
     if (rootProperties.length === 0 && Array.isArray(buildOptions.include)) {
         const jobs = include.filter(job => !matchesExclusion(job, exclude));
         const dedupedJobs = filterUniqueJobs(jobs);
@@ -25668,7 +25673,7 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
             ]
         };
     }
-    if (include.length > 0 && rootProperties.length > 0 && groupByKey) {
+    if (include.length > 0 && rootProperties.length > 0 && groupByKey && !includeDefinesGroup) {
         const otherProps = rootProperties.filter(p => p !== groupByKey);
         const allIncludeCoverOtherProps = include.every(inc => otherProps.every(p => {
             if (Object.prototype.hasOwnProperty.call(inc, p)) {
@@ -25709,49 +25714,215 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
         }
     }
     const combinations = getCombinations(rootProperties, values);
-    const jobs = {};
+    const jobsByGroup = new Map();
+    const groupInsertionOrder = [];
     for (const combination of combinations) {
-        let includeProps = {};
-        if (include.length > 0) {
-            const matchingIncludes = include.filter(rule => Object.entries(rule).every(([k, v]) => combination[k] === undefined || combination[k] === v));
+        const matchingIncludes = include.filter(rule => Object.entries(rule).every(([k, v]) => combination[k] === undefined || combination[k] === v));
+        const candidates = [];
+        if (matchingIncludes.length > 0) {
             for (const rule of matchingIncludes) {
-                includeProps = { ...includeProps, ...rule };
+                candidates.push({ job: { ...combination, ...rule }, rule });
             }
         }
-        let jobName = rootProperties
-            .filter(p => (groupByKey !== undefined && p !== groupByKey) && values[p].length > 1)
-            .map(p => combination[p])
-            .join(' ');
-        const includeKeys = Object.keys(includeProps);
-        if (jobName === combination.os && includeKeys.length > 0) {
-            jobName = `${includeKeys.map(k => `${includeProps[k]}`).join(' ')}`;
+        else if (include.length === 0) {
+            candidates.push({ job: { ...combination } });
         }
-        const job = {
-            name: jobName,
-            ...combination,
-            ...includeProps,
-        };
-        if (matchesExclusion(job, exclude)) {
+        for (const { job: candidate, rule } of candidates) {
+            if (groupByKey && candidate[groupByKey] === undefined) {
+                candidate[groupByKey] = combination[groupByKey];
+            }
+            if (matchesExclusion(candidate, exclude)) {
+                continue;
+            }
+            let jobName = typeof candidate.name === 'string' ? candidate.name : undefined;
+            if (!jobName) {
+                const baseName = rootProperties
+                    .filter(p => (groupByKey !== undefined && p !== groupByKey) && values[p].length > 1)
+                    .map(p => combination[p])
+                    .join(' ');
+                jobName = baseName;
+                const includeKeys = rule ? Object.keys(rule) : [];
+                if (baseName === combination.os && includeKeys.length > 0) {
+                    jobName = includeKeys.map(key => String(candidate[key])).join(' ');
+                }
+                if (!jobName || jobName.trim().length === 0) {
+                    jobName = buildJobName(candidate, groupByKey || '', Object.keys(candidate));
+                }
+            }
+            const job = { ...candidate, name: jobName };
+            if (groupByKey === undefined) {
+                throw new Error(`groupByKey parameter is undefined for job: ${JSON.stringify(job)}`);
+            }
+            const groupValue = job[groupByKey];
+            if (groupValue === undefined) {
+                throw new Error(`Group '${groupByKey}' is undefined for job: ${JSON.stringify(job)}`);
+            }
+            const group = String(groupValue);
+            if (!jobsByGroup.has(group)) {
+                jobsByGroup.set(group, []);
+                groupInsertionOrder.push(group);
+            }
+            jobsByGroup.get(group).push(job);
+        }
+    }
+    const jobsArray = [];
+    const appendedGroups = new Set();
+    let knownGroupOrder;
+    if (groupByKey && Array.isArray(values[groupByKey])) {
+        knownGroupOrder = values[groupByKey];
+    }
+    const knownGroupSet = new Set(knownGroupOrder !== null && knownGroupOrder !== void 0 ? knownGroupOrder : []);
+    const sentinelGroups = new Map();
+    if (groupByKey) {
+        const groupKey = groupByKey;
+        const externalGroupOrder = [];
+        const externalGroups = new Map();
+        const groupValuesForSentinel = knownGroupOrder !== null && knownGroupOrder !== void 0 ? knownGroupOrder : Array.from(new Set(include
+            .map(inc => (inc && typeof inc === 'object' ? inc[groupKey] : undefined))
+            .filter((val) => Boolean(val))));
+        const externalOccurrence = new Map();
+        for (const inc of include) {
+            if (!inc || typeof inc !== 'object') {
+                continue;
+            }
+            const groupVal = inc[groupKey];
+            if (!groupVal) {
+                continue;
+            }
+            for (const prop of rootProperties) {
+                if (!Object.prototype.hasOwnProperty.call(inc, prop)) {
+                    continue;
+                }
+                const propValues = values[prop] || [];
+                const propValue = inc[prop];
+                if (!propValues.includes(propValue)) {
+                    const key = `${prop}:::${propValue}`;
+                    if (!externalOccurrence.has(key)) {
+                        externalOccurrence.set(key, new Set());
+                    }
+                    externalOccurrence.get(key).add(String(groupVal));
+                }
+            }
+        }
+        const totalGroupsForSentinel = groupValuesForSentinel.length;
+        const sentinelExternalKeys = new Set();
+        if (totalGroupsForSentinel > 0) {
+            for (const [key, groupSet] of externalOccurrence.entries()) {
+                if (groupSet.size === totalGroupsForSentinel) {
+                    sentinelExternalKeys.add(key);
+                }
+            }
+        }
+        for (const inc of include) {
+            if (!inc || typeof inc !== 'object') {
+                continue;
+            }
+            const groupVal = inc[groupKey];
+            if (!groupVal) {
+                continue;
+            }
+            const externalKeysForInclude = [];
+            for (const prop of rootProperties) {
+                if (!Object.prototype.hasOwnProperty.call(inc, prop)) {
+                    continue;
+                }
+                const propValues = values[prop] || [];
+                const propValue = inc[prop];
+                if (!propValues.includes(propValue)) {
+                    externalKeysForInclude.push(`${prop}:::${propValue}`);
+                }
+            }
+            if (!knownGroupSet.has(groupVal)) {
+                const jobEntry = { ...inc, [groupKey]: groupVal };
+                if (!jobEntry.name) {
+                    let generatedName = buildJobName(jobEntry, groupKey, Object.keys(jobEntry));
+                    if ((!generatedName || generatedName.length === 0) && groupVal) {
+                        generatedName = String(groupVal);
+                    }
+                    else if (generatedName && groupVal && !generatedName.includes(String(groupVal))) {
+                        generatedName = `${generatedName} ${groupVal}`;
+                    }
+                    jobEntry.name = generatedName;
+                }
+                if (matchesExclusion(jobEntry, exclude)) {
+                    continue;
+                }
+                if (!externalGroups.has(groupVal)) {
+                    externalGroups.set(groupVal, []);
+                    externalGroupOrder.push(groupVal);
+                }
+                externalGroups.get(groupVal).push(jobEntry);
+                continue;
+            }
+            if (externalKeysForInclude.length > 0 &&
+                externalKeysForInclude.every(key => sentinelExternalKeys.has(key))) {
+                const jobEntry = { ...inc };
+                if (!Object.prototype.hasOwnProperty.call(jobEntry, groupKey)) {
+                    jobEntry[groupKey] = groupVal;
+                }
+                if (!jobEntry.name) {
+                    jobEntry.name = buildJobName(jobEntry, groupKey, Object.keys(jobEntry));
+                }
+                if (matchesExclusion(jobEntry, exclude)) {
+                    continue;
+                }
+                if (!sentinelGroups.has(groupVal)) {
+                    sentinelGroups.set(groupVal, []);
+                }
+                sentinelGroups.get(groupVal).push(jobEntry);
+            }
+        }
+        for (const groupVal of externalGroupOrder) {
+            const entries = (_a = externalGroups.get(groupVal)) !== null && _a !== void 0 ? _a : [];
+            if (entries.length === 0) {
+                continue;
+            }
+            jobsArray.push({
+                name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${groupVal}` : groupVal,
+                matrix: { include: filterUniqueJobs(entries) },
+            });
+            appendedGroups.add(groupVal);
+        }
+    }
+    const iterationOrder = knownGroupOrder !== null && knownGroupOrder !== void 0 ? knownGroupOrder : groupInsertionOrder;
+    for (const group of iterationOrder) {
+        if (appendedGroups.has(group)) {
             continue;
         }
-        let group = combination[groupByKey];
-        if (group === undefined && includeProps && includeProps[groupByKey]) {
-            group = includeProps[groupByKey];
+        const groupJobs = (_b = jobsByGroup.get(group)) !== null && _b !== void 0 ? _b : [];
+        const sentinel = (_c = sentinelGroups.get(group)) !== null && _c !== void 0 ? _c : [];
+        if (groupJobs.length === 0 && sentinel.length === 0) {
+            continue;
         }
-        if (group === undefined) {
-            throw new Error(`Group '${groupByKey}' is undefined for job: ${JSON.stringify(job)}`);
-        }
-        if (!jobs[group]) {
-            jobs[group] = [];
-        }
-        jobs[group].push(job);
+        const combined = sentinel.length > 0 ? [...sentinel, ...groupJobs] : groupJobs;
+        jobsArray.push({
+            name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${group}` : group,
+            matrix: { include: filterUniqueJobs(combined) },
+        });
+        appendedGroups.add(group);
     }
-    const jobsArray = Object.entries(jobs).map(([group, jobs]) => ({
-        name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${group}` : group,
-        matrix: {
-            include: filterUniqueJobs(jobs),
+    for (const [group, sentinel] of sentinelGroups.entries()) {
+        if (appendedGroups.has(group) || !sentinel || sentinel.length === 0) {
+            continue;
         }
-    }));
+        jobsArray.push({
+            name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${group}` : group,
+            matrix: { include: filterUniqueJobs(sentinel) },
+        });
+        appendedGroups.add(group);
+    }
+    for (const [group, groupJobs] of jobsByGroup.entries()) {
+        if (appendedGroups.has(group) || !groupJobs || groupJobs.length === 0) {
+            continue;
+        }
+        const sentinel = (_d = sentinelGroups.get(group)) !== null && _d !== void 0 ? _d : [];
+        const combined = sentinel.length > 0 ? [...sentinel, ...groupJobs] : groupJobs;
+        jobsArray.push({
+            name: jobNamePrefix && jobNamePrefix.trim().length > 0 ? `${jobNamePrefix} ${group}` : group,
+            matrix: { include: filterUniqueJobs(combined) },
+        });
+        appendedGroups.add(group);
+    }
     return { jobs: jobsArray };
 }
 function filterUniqueJobs(jobs) {

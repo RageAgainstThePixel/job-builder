@@ -5,7 +5,6 @@
     "macos-latest"
   ],
   "unity-version": [
-    "None",
     "4.7.2",
     "5.6.7f1 (e80cc3114ac1)",
     "2020.3",
@@ -17,13 +16,25 @@
   "include": [
     {
       "os": "ubuntu-latest",
+      "unity-version": "None"
+    },
+    {
+      "os": "ubuntu-latest",
       "build-targets": "StandaloneLinux64, Android, iOS",
       "modules": "linux-server"
     },
     {
       "os": "windows-latest",
+      "unity-version": "None"
+    },
+    {
+      "os": "windows-latest",
       "build-targets": "StandaloneWindows64, Android, WSAPlayer",
       "modules": "windows-server"
+    },
+    {
+      "os": "macos-latest",
+      "unity-version": "None"
     },
     {
       "os": "macos-latest",
