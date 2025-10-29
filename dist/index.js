@@ -25923,6 +25923,17 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
         });
         appendedGroups.add(group);
     }
+    jobsArray.sort((a, b) => {
+        const nameA = a.name || '';
+        const nameB = b.name || '';
+        if (nameA < nameB) {
+            return 1;
+        }
+        if (nameA > nameB) {
+            return -1;
+        }
+        return 0;
+    });
     return { jobs: jobsArray };
 }
 function filterUniqueJobs(jobs) {

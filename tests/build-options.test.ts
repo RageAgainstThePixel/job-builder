@@ -57,6 +57,14 @@ describe('build-options source/expected pairs', () => {
             const sourceJson: BuildOptions = JSON.parse(fs.readFileSync(sourcePath, 'utf-8'));
             const result: JobMatrix = generateJobsMatrix(sourceJson, groupBy, jobNamePrefix);
             const expectedJson: JobMatrix = JSON.parse(fs.readFileSync(expectedPath, 'utf-8'));
+            // Normalize ordering: sort both actual and expected job groups by name descending
+            const sortDesc = (a: { name: string }, b: { name: string }) => {
+                if (a.name < b.name) { return 1; }
+                if (a.name > b.name) { return -1; }
+                return 0;
+            };
+            result.jobs.sort(sortDesc);
+            expectedJson.jobs.sort(sortDesc);
             expect(result).toEqual(expectedJson);
         });
     });

@@ -305,6 +305,15 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
         appendedGroups.add(group);
     }
 
+    // Sort job groups by their name in descending order before returning
+    jobsArray.sort((a, b) => {
+        const nameA = a.name || '';
+        const nameB = b.name || '';
+        if (nameA < nameB) { return 1; }
+        if (nameA > nameB) { return -1; }
+        return 0;
+    });
+
     return { jobs: jobsArray };
 }
 

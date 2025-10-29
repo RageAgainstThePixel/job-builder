@@ -1,6 +1,6 @@
 {
   "name": "job-builder",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "A GitHub action to setup job matrixes for complex job workflows.",
   "author": "RageAgainstThePixel",
   "license": "MIT",
@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@types/node": "^22.18.12",
+    "@types/node": "^22.18.13",
     "@vercel/ncc": "^0.34.0",
     "jest": "^30.2.0",
     "shx": "^0.3.4",
