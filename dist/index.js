@@ -25949,14 +25949,16 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix, sortBy) {
         if (!m) {
             return null;
         }
-        return m[1].split('.').map(x => parseInt(x, 10));
+        return { nums: m[0].split('.').map(x => parseInt(x, 10)), matched: m[0] };
     };
     const compareNames = (aName, bName) => {
         var _a, _b;
         const aStr = stripPrefix(aName || '', jobNamePrefix || undefined);
         const bStr = stripPrefix(bName || '', jobNamePrefix || undefined);
-        const aNums = parseLeadingNumbers(aStr);
-        const bNums = parseLeadingNumbers(bStr);
+        const aParsed = parseLeadingNumbers(aStr);
+        const bParsed = parseLeadingNumbers(bStr);
+        const aNums = aParsed ? aParsed.nums : null;
+        const bNums = bParsed ? bParsed.nums : null;
         if (aNums && !bNums) {
             return direction === 1 ? 1 : -1;
         }
@@ -25979,8 +25981,8 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix, sortBy) {
                 }
             }
             if (cmp === 0) {
-                const aRest = aStr.slice((aNums.join('.')).length).trim();
-                const bRest = bStr.slice((bNums.join('.')).length).trim();
+                const aRest = aParsed ? aStr.slice(aParsed.matched.length).trim() : aStr.trim();
+                const bRest = bParsed ? bStr.slice(bParsed.matched.length).trim() : bStr.trim();
                 cmp = aRest.localeCompare(bRest);
             }
         }
