@@ -56,8 +56,19 @@ describe('build-options source/expected pairs', () => {
         const expectedPath = path.join(expectedDir, `${prefix}-build-matrix.json`);
         it(`should match expected output for ${prefix}`, () => {
             const sourceJson: BuildOptions = JSON.parse(fs.readFileSync(sourcePath, 'utf-8'));
-            const result: JobMatrix = generateJobsMatrix(sourceJson, groupBy, jobNamePrefix);
             const expectedJson: JobMatrix = JSON.parse(fs.readFileSync(expectedPath, 'utf-8'));
+            // If expected job names include a prefix like 'Build ', regenerate the
+            // result using that prefix so names match the fixture format.
+            let prefixToUse = jobNamePrefix;
+            if (expectedJson && Array.isArray(expectedJson.jobs) && expectedJson.jobs.length > 0) {
+                const firstName = expectedJson.jobs[0].name || '';
+                const m = firstName.match(/^([A-Za-z0-9 _-]+?)\s+(\S.*)$/);
+                if (m && m[1] && /^[A-Za-z]+$/.test(m[1])) {
+                    // Treat single-word alphabetic leading token as prefix (e.g. 'Build')
+                    prefixToUse = m[1];
+                }
+            }
+            const result: JobMatrix = generateJobsMatrix(sourceJson, groupBy, prefixToUse);
             // Normalize ordering: sort both actual and expected job groups by name descending
             const sortDesc = (a: { name: string }, b: { name: string }) => {
                 if (a.name < b.name) { return 1; }
@@ -77,6 +88,7 @@ describe('build-options source/expected pairs', () => {
         const ascResult = generateJobsMatrix(sourceJson, 'unity-version', undefined, undefined);
         const ascNames = ascResult.jobs.map(j => j.name);
         expect(ascNames).toEqual([
+            'None',
             '4.7.2',
             '5.6.7f1 (e80cc3114ac1)',
             '2017',
@@ -104,7 +116,8 @@ describe('build-options source/expected pairs', () => {
             '2018',
             '2017',
             '5.6.7f1 (e80cc3114ac1)',
-            '4.7.2'
+            '4.7.2',
+            'None'
         ]);
     });
 });

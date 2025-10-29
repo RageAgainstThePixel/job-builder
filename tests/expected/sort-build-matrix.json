@@ -1,6 +1,28 @@
 {
   "jobs": [
     {
+      "name": "Build None",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "unity-version": "None",
+            "name": "ubuntu-latest"
+          },
+          {
+            "os": "windows-latest",
+            "unity-version": "None",
+            "name": "windows-latest"
+          },
+          {
+            "os": "macos-latest",
+            "unity-version": "None",
+            "name": "macos-latest"
+          }
+        ]
+      }
+    },
+    {
       "name": "Build 6000.2",
       "matrix": {
         "include": [

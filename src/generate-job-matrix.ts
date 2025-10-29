@@ -333,9 +333,23 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
         const aStr = stripPrefix(aName || '', jobNamePrefix || undefined);
         const bStr = stripPrefix(bName || '', jobNamePrefix || undefined);
 
-        // Try semantic numeric compare based on leading numeric tokens
+        // Try semantic numeric compare based on leading numeric tokens.
+        // If one entry has a leading numeric version and the other does not,
+        // treat the non-numeric entry as its own category and sort it before
+        // numeric versions when sorting ascending.
         const aNums = parseLeadingNumbers(aStr);
         const bNums = parseLeadingNumbers(bStr);
+
+        // If only one side has numeric leading tokens, it should come after
+        // the non-numeric entry when sorting ascending (direction === 1).
+        if (aNums && !bNums) {
+            // a has numbers, b does not -> a > b for ascending
+            return direction === 1 ? 1 : -1;
+        }
+        if (!aNums && bNums) {
+            // a has no numbers, b does -> a < b for ascending
+            return direction === 1 ? -1 : 1;
+        }
 
         let cmp = 0;
         if (aNums && bNums) {
