@@ -67,6 +67,50 @@
       }
     },
     {
+      "name": "Build 6000.0.48f2",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "unity-version": "6000.0.48f2",
+            "name": "ubuntu-latest"
+          },
+          {
+            "os": "windows-latest",
+            "unity-version": "6000.0.48f2",
+            "name": "windows-latest"
+          },
+          {
+            "os": "macos-latest",
+            "unity-version": "6000.0.48f2",
+            "name": "macos-latest"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 6000.0.48f1",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "unity-version": "6000.0.48f1",
+            "name": "ubuntu-latest"
+          },
+          {
+            "os": "windows-latest",
+            "unity-version": "6000.0.48f1",
+            "name": "windows-latest"
+          },
+          {
+            "os": "macos-latest",
+            "unity-version": "6000.0.48f1",
+            "name": "macos-latest"
+          }
+        ]
+      }
+    },
+    {
       "name": "Build 6000.0",
       "matrix": {
         "include": [

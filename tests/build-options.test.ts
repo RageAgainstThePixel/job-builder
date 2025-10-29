@@ -98,6 +98,8 @@ describe('build-options source/expected pairs', () => {
             '2021',
             '2022',
             '6000.0',
+            '6000.0.48f1',
+            '6000.0.48f2',
             '6000.1',
             '6000.2'
         ]);
@@ -108,6 +110,8 @@ describe('build-options source/expected pairs', () => {
         expect(descNames).toEqual([
             '6000.2',
             '6000.1',
+            '6000.0.48f2',
+            '6000.0.48f1',
             '6000.0',
             '2022',
             '2021',
@@ -119,5 +123,27 @@ describe('build-options source/expected pairs', () => {
             '4.7.2',
             'None'
         ]);
+    });
+
+    it('should correctly sort versions with extra patch and build identifiers like 6000.0.48f1 vs f2', () => {
+        const source: BuildOptions = {
+            'unity-version': ['6000.0.48f1', '6000.0.48f2'],
+            jobs: undefined as any // not used
+        } as any;
+
+        // Create a simple buildOptions structure expected by generateJobsMatrix
+        const buildOptions: BuildOptions = {
+            'unity-version': ['6000.0.48f1', '6000.0.48f2'],
+            include: [],
+            exclude: []
+        } as unknown as BuildOptions;
+
+        const asc = generateJobsMatrix(buildOptions, 'unity-version', undefined, undefined);
+        const ascNames = asc.jobs.map(j => j.name);
+        expect(ascNames).toEqual(['6000.0.48f1', '6000.0.48f2']);
+
+        const desc = generateJobsMatrix(buildOptions, 'unity-version', undefined, 'desc');
+        const descNames = desc.jobs.map(j => j.name);
+        expect(descNames).toEqual(['6000.0.48f2', '6000.0.48f1']);
     });
 });

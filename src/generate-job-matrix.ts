@@ -321,12 +321,13 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
         return name;
     };
 
-    const parseLeadingNumbers = (s: string): number[] | null => {
+    const parseLeadingNumbers = (s: string): { nums: number[], matched: string } | null => {
         if (!s) { return null; }
         // match a leading numeric version like 2022, 2022.3, 5.6.7
         const m = s.trim().match(/^([0-9]+(?:\.[0-9]+)*)/);
         if (!m) { return null; }
-        return m[1].split('.').map(x => parseInt(x, 10));
+        // m[0] is the matched string; use it for slicing later to preserve exact formatting
+        return { nums: m[0].split('.').map(x => parseInt(x, 10)), matched: m[0] };
     };
 
     const compareNames = (aName: string, bName: string) => {
@@ -337,8 +338,10 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
         // If one entry has a leading numeric version and the other does not,
         // treat the non-numeric entry as its own category and sort it before
         // numeric versions when sorting ascending.
-        const aNums = parseLeadingNumbers(aStr);
-        const bNums = parseLeadingNumbers(bStr);
+        const aParsed = parseLeadingNumbers(aStr);
+        const bParsed = parseLeadingNumbers(bStr);
+        const aNums = aParsed ? aParsed.nums : null;
+        const bNums = bParsed ? bParsed.nums : null;
 
         // If only one side has numeric leading tokens, it should come after
         // the non-numeric entry when sorting ascending (direction === 1).
@@ -361,9 +364,10 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
                 if (av > bv) { cmp = 1; break; }
             }
             if (cmp === 0) {
-                // If numeric parts equal, compare the rest of the string
-                const aRest = aStr.slice((aNums.join('.')).length).trim();
-                const bRest = bStr.slice((bNums.join('.')).length).trim();
+                // If numeric parts equal, compare the rest of the string.
+                // Use the exact matched length from the regex so offsets line up with the original string
+                const aRest = aParsed ? aStr.slice(aParsed.matched.length).trim() : aStr.trim();
+                const bRest = bParsed ? bStr.slice(bParsed.matched.length).trim() : bStr.trim();
                 cmp = aRest.localeCompare(bRest);
             }
         } else {
