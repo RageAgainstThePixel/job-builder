@@ -5,7 +5,7 @@ import {
     JobMatrix,
 } from './types';
 
-export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string | undefined, jobNamePrefix: string | undefined): JobMatrix {
+export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string | undefined, jobNamePrefix: string | undefined, sortBy?: string): JobMatrix {
     const rootProperties: string[] = getRootProperties(buildOptions);
     const groupByKey: string | undefined = groupBy || rootProperties[0] || undefined;
     const exclude: Array<Record<string, string>> = getArrayOrEmpty(buildOptions.exclude);
@@ -304,6 +304,80 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
         });
         appendedGroups.add(group);
     }
+
+    // Sort job groups by their name. Support semantic version ordering and
+    // optionally omit the `jobNamePrefix` when comparing (e.g. "Build 2022").
+    // `sortBy` controls ascending/descending. Accept common synonyms ('asc','ascending','desc','descending').
+    // Default is ascending.
+    const sb = sortBy ? String(sortBy).toLowerCase() : '';
+    const direction = (sb === 'desc' || sb === 'descending') ? -1 : 1;
+
+    const stripPrefix = (name: string, prefix?: string) => {
+        if (!prefix || !name) { return name; }
+        const pref = prefix.trim();
+        if (pref.length === 0) { return name; }
+        if (name.startsWith(pref + ' ')) { return name.slice(pref.length + 1).trim(); }
+        if (name.startsWith(pref)) { return name.slice(pref.length).trim(); }
+        return name;
+    };
+
+    const parseLeadingNumbers = (s: string): { nums: number[], matched: string } | null => {
+        if (!s) { return null; }
+        // match a leading numeric version like 2022, 2022.3, 5.6.7
+        const m = s.trim().match(/^([0-9]+(?:\.[0-9]+)*)/);
+        if (!m) { return null; }
+        // m[0] is the matched string; use it for slicing later to preserve exact formatting
+        return { nums: m[0].split('.').map(x => parseInt(x, 10)), matched: m[0] };
+    };
+
+    const compareNames = (aName: string, bName: string) => {
+        const aStr = stripPrefix(aName || '', jobNamePrefix || undefined);
+        const bStr = stripPrefix(bName || '', jobNamePrefix || undefined);
+
+        // Try semantic numeric compare based on leading numeric tokens.
+        // If one entry has a leading numeric version and the other does not,
+        // treat the non-numeric entry as its own category and sort it before
+        // numeric versions when sorting ascending.
+        const aParsed = parseLeadingNumbers(aStr);
+        const bParsed = parseLeadingNumbers(bStr);
+        const aNums = aParsed ? aParsed.nums : null;
+        const bNums = bParsed ? bParsed.nums : null;
+
+        // If only one side has numeric leading tokens, it should come after
+        // the non-numeric entry when sorting ascending (direction === 1).
+        if (aNums && !bNums) {
+            // a has numbers, b does not -> a > b for ascending
+            return direction === 1 ? 1 : -1;
+        }
+        if (!aNums && bNums) {
+            // a has no numbers, b does -> a < b for ascending
+            return direction === 1 ? -1 : 1;
+        }
+
+        let cmp = 0;
+        if (aNums && bNums) {
+            const len = Math.max(aNums.length, bNums.length);
+            for (let i = 0; i < len; i++) {
+                const av = aNums[i] ?? 0;
+                const bv = bNums[i] ?? 0;
+                if (av < bv) { cmp = -1; break; }
+                if (av > bv) { cmp = 1; break; }
+            }
+            if (cmp === 0) {
+                // If numeric parts equal, compare the rest of the string.
+                // Use the exact matched length from the regex so offsets line up with the original string
+                const aRest = aParsed ? aStr.slice(aParsed.matched.length).trim() : aStr.trim();
+                const bRest = bParsed ? bStr.slice(bParsed.matched.length).trim() : bStr.trim();
+                cmp = aRest.localeCompare(bRest);
+            }
+        } else {
+            cmp = aStr.localeCompare(bStr);
+        }
+
+        return cmp * direction;
+    };
+
+    jobsArray.sort((a, b) => compareNames(a.name || '', b.name || ''));
 
     return { jobs: jobsArray };
 }

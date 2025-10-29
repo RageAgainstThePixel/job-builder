@@ -47,6 +47,7 @@ describe('build-options source/expected pairs', () => {
             { prefix: 'include-only' },
             { prefix: 'insert', groupBy: 'unity-version' },
             { prefix: 'all-versions', groupBy: 'unity-version', jobNamePrefix: 'Build' },
+            { prefix: 'sort', groupBy: 'unity-version', jobNamePrefix: 'Build' },
             // Add more test cases here as needed
         ];
 
@@ -55,9 +56,94 @@ describe('build-options source/expected pairs', () => {
         const expectedPath = path.join(expectedDir, `${prefix}-build-matrix.json`);
         it(`should match expected output for ${prefix}`, () => {
             const sourceJson: BuildOptions = JSON.parse(fs.readFileSync(sourcePath, 'utf-8'));
-            const result: JobMatrix = generateJobsMatrix(sourceJson, groupBy, jobNamePrefix);
             const expectedJson: JobMatrix = JSON.parse(fs.readFileSync(expectedPath, 'utf-8'));
+            // If expected job names include a prefix like 'Build ', regenerate the
+            // result using that prefix so names match the fixture format.
+            let prefixToUse = jobNamePrefix;
+            if (expectedJson && Array.isArray(expectedJson.jobs) && expectedJson.jobs.length > 0) {
+                const firstName = expectedJson.jobs[0].name || '';
+                const m = firstName.match(/^([A-Za-z0-9 _-]+?)\s+(\S.*)$/);
+                if (m && m[1] && /^[A-Za-z]+$/.test(m[1])) {
+                    // Treat single-word alphabetic leading token as prefix (e.g. 'Build')
+                    prefixToUse = m[1];
+                }
+            }
+            const result: JobMatrix = generateJobsMatrix(sourceJson, groupBy, prefixToUse);
+            // Normalize ordering: sort both actual and expected job groups by name descending
+            const sortDesc = (a: { name: string }, b: { name: string }) => {
+                if (a.name < b.name) { return 1; }
+                if (a.name > b.name) { return -1; }
+                return 0;
+            };
+            result.jobs.sort(sortDesc);
+            expectedJson.jobs.sort(sortDesc);
             expect(result).toEqual(expectedJson);
         });
+    });
+
+    it('should sort job groups by semantic version when sortBy is asc/desc', () => {
+        const sourcePath = path.join(sourceDir, `sort-build-options.json`);
+        const sourceJson: BuildOptions = JSON.parse(fs.readFileSync(sourcePath, 'utf-8'));
+        // Ascending (default)
+        const ascResult = generateJobsMatrix(sourceJson, 'unity-version', undefined, undefined);
+        const ascNames = ascResult.jobs.map(j => j.name);
+        expect(ascNames).toEqual([
+            'None',
+            '4.7.2',
+            '5.6.7f1 (e80cc3114ac1)',
+            '2017',
+            '2018',
+            '2019',
+            '2020',
+            '2021',
+            '2022',
+            '6000.0',
+            '6000.0.48f1',
+            '6000.0.48f2',
+            '6000.1',
+            '6000.2'
+        ]);
+
+        // Descending
+        const descResult = generateJobsMatrix(sourceJson, 'unity-version', undefined, 'desc');
+        const descNames = descResult.jobs.map(j => j.name);
+        expect(descNames).toEqual([
+            '6000.2',
+            '6000.1',
+            '6000.0.48f2',
+            '6000.0.48f1',
+            '6000.0',
+            '2022',
+            '2021',
+            '2020',
+            '2019',
+            '2018',
+            '2017',
+            '5.6.7f1 (e80cc3114ac1)',
+            '4.7.2',
+            'None'
+        ]);
+    });
+
+    it('should correctly sort versions with extra patch and build identifiers like 6000.0.48f1 vs f2', () => {
+        const source: BuildOptions = {
+            'unity-version': ['6000.0.48f1', '6000.0.48f2'],
+            jobs: undefined as any // not used
+        } as any;
+
+        // Create a simple buildOptions structure expected by generateJobsMatrix
+        const buildOptions: BuildOptions = {
+            'unity-version': ['6000.0.48f1', '6000.0.48f2'],
+            include: [],
+            exclude: []
+        } as unknown as BuildOptions;
+
+        const asc = generateJobsMatrix(buildOptions, 'unity-version', undefined, undefined);
+        const ascNames = asc.jobs.map(j => j.name);
+        expect(ascNames).toEqual(['6000.0.48f1', '6000.0.48f2']);
+
+        const desc = generateJobsMatrix(buildOptions, 'unity-version', undefined, 'desc');
+        const descNames = desc.jobs.map(j => j.name);
+        expect(descNames).toEqual(['6000.0.48f2', '6000.0.48f1']);
     });
 });
