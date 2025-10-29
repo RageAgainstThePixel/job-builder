@@ -25957,6 +25957,12 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix, sortBy) {
         const bStr = stripPrefix(bName || '', jobNamePrefix || undefined);
         const aNums = parseLeadingNumbers(aStr);
         const bNums = parseLeadingNumbers(bStr);
+        if (aNums && !bNums) {
+            return direction === 1 ? 1 : -1;
+        }
+        if (!aNums && bNums) {
+            return direction === 1 ? -1 : 1;
+        }
         let cmp = 0;
         if (aNums && bNums) {
             const len = Math.max(aNums.length, bNums.length);
