@@ -1,21 +1,25 @@
 name: job-builder
-description: 'A GitHub action to setup job matrixes for complex job workflows'
+description: A GitHub action to setup job matrixes for complex job workflows
 branding:
-  icon: 'loader'
-  color: 'blue'
+  icon: loader
+  color: blue
 inputs:
   build-options:
-    description: 'The path to the build options JSON file.'
+    description: The path to the build options JSON file.
     required: true
   group-by:
-    description: 'The property to group jobs by. Defaults to the first property in the build options object.'
+    description: The property to group jobs by. Defaults to the first property in the build options object.
     required: false
+  sort-by:
+    description: The order to sort job groups by name. Accepts `asc`, `ascending`, `desc`, `descending`. Defaults to `ascending`.
+    required: false
+    default: ascending
   job-name-prefix:
-    description: 'The prefix to use for job names. Defaults to empty string.'
+    description: The prefix to use for job names. Defaults to empty string.
     required: false
 outputs:
   jobs:
-    description: 'The JSON string of the job matrix.'
+    description: The JSON string of the job matrix.
 runs:
-  using: 'node20'
-  main: 'dist/index.js'
+  using: node20
+  main: dist/index.js

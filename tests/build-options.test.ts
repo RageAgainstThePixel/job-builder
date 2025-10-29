@@ -47,6 +47,7 @@ describe('build-options source/expected pairs', () => {
             { prefix: 'include-only' },
             { prefix: 'insert', groupBy: 'unity-version' },
             { prefix: 'all-versions', groupBy: 'unity-version', jobNamePrefix: 'Build' },
+            { prefix: 'sort', groupBy: 'unity-version', jobNamePrefix: 'Build' },
             // Add more test cases here as needed
         ];
 
@@ -67,5 +68,43 @@ describe('build-options source/expected pairs', () => {
             expectedJson.jobs.sort(sortDesc);
             expect(result).toEqual(expectedJson);
         });
+    });
+
+    it('should sort job groups by semantic version when sortBy is asc/desc', () => {
+        const sourcePath = path.join(sourceDir, `sort-build-options.json`);
+        const sourceJson: BuildOptions = JSON.parse(fs.readFileSync(sourcePath, 'utf-8'));
+        // Ascending (default)
+        const ascResult = generateJobsMatrix(sourceJson, 'unity-version', undefined, undefined);
+        const ascNames = ascResult.jobs.map(j => j.name);
+        expect(ascNames).toEqual([
+            '4.7.2',
+            '5.6.7f1 (e80cc3114ac1)',
+            '2017',
+            '2018',
+            '2019',
+            '2020',
+            '2021',
+            '2022',
+            '6000.0',
+            '6000.1',
+            '6000.2'
+        ]);
+
+        // Descending
+        const descResult = generateJobsMatrix(sourceJson, 'unity-version', undefined, 'desc');
+        const descNames = descResult.jobs.map(j => j.name);
+        expect(descNames).toEqual([
+            '6000.2',
+            '6000.1',
+            '6000.0',
+            '2022',
+            '2021',
+            '2020',
+            '2019',
+            '2018',
+            '2017',
+            '5.6.7f1 (e80cc3114ac1)',
+            '4.7.2'
+        ]);
     });
 });

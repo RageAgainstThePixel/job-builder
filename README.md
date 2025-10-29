@@ -52,6 +52,7 @@ jobs:
 | `build-options` | The path to the build options JSON file. | true |
 | `group-by` | The property to group jobs by. Defaults to the first property in the build options object. | false |
 | `job-name-prefix` | The prefix to use for job names. Defaults to empty string. | false |
+| `sort-by` | The order to sort job groups by name. Accepts `asc`, `ascending`, `desc`, `descending`. Defaults to `ascending`. | false |
 
 ### outputs
 

@@ -14,7 +14,8 @@ async function main() {
     const buildOptions: BuildOptions = JSON.parse(fs.readFileSync(buildOptionsPath, 'utf-8'));
     const groupBy: string | undefined = core.getInput('group-by');
     const jobNamePrefix: string | undefined = core.getInput('job-name-prefix');
-    const jobs: JobMatrix = generateJobsMatrix(buildOptions, groupBy, jobNamePrefix);
+    const sortBy: string | undefined = core.getInput('sort-by');
+    const jobs: JobMatrix = generateJobsMatrix(buildOptions, groupBy, jobNamePrefix, sortBy);
     core.info(JSON.stringify(jobs, null, 2));
     core.setOutput('jobs', JSON.stringify(jobs));
   } catch (error) {

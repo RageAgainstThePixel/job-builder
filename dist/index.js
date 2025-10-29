@@ -25650,7 +25650,7 @@ module.exports = {
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.generateJobsMatrix = generateJobsMatrix;
-function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
+function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix, sortBy) {
     var _a, _b, _c, _d;
     const rootProperties = getRootProperties(buildOptions);
     const groupByKey = groupBy || rootProperties[0] || undefined;
@@ -25923,17 +25923,67 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix) {
         });
         appendedGroups.add(group);
     }
-    jobsArray.sort((a, b) => {
-        const nameA = a.name || '';
-        const nameB = b.name || '';
-        if (nameA < nameB) {
-            return 1;
+    const sb = sortBy ? String(sortBy).toLowerCase() : '';
+    const direction = (sb === 'desc' || sb === 'descending') ? -1 : 1;
+    const stripPrefix = (name, prefix) => {
+        if (!prefix || !name) {
+            return name;
         }
-        if (nameA > nameB) {
-            return -1;
+        const pref = prefix.trim();
+        if (pref.length === 0) {
+            return name;
         }
-        return 0;
-    });
+        if (name.startsWith(pref + ' ')) {
+            return name.slice(pref.length + 1).trim();
+        }
+        if (name.startsWith(pref)) {
+            return name.slice(pref.length).trim();
+        }
+        return name;
+    };
+    const parseLeadingNumbers = (s) => {
+        if (!s) {
+            return null;
+        }
+        const m = s.trim().match(/^([0-9]+(?:\.[0-9]+)*)/);
+        if (!m) {
+            return null;
+        }
+        return m[1].split('.').map(x => parseInt(x, 10));
+    };
+    const compareNames = (aName, bName) => {
+        var _a, _b;
+        const aStr = stripPrefix(aName || '', jobNamePrefix || undefined);
+        const bStr = stripPrefix(bName || '', jobNamePrefix || undefined);
+        const aNums = parseLeadingNumbers(aStr);
+        const bNums = parseLeadingNumbers(bStr);
+        let cmp = 0;
+        if (aNums && bNums) {
+            const len = Math.max(aNums.length, bNums.length);
+            for (let i = 0; i < len; i++) {
+                const av = (_a = aNums[i]) !== null && _a !== void 0 ? _a : 0;
+                const bv = (_b = bNums[i]) !== null && _b !== void 0 ? _b : 0;
+                if (av < bv) {
+                    cmp = -1;
+                    break;
+                }
+                if (av > bv) {
+                    cmp = 1;
+                    break;
+                }
+            }
+            if (cmp === 0) {
+                const aRest = aStr.slice((aNums.join('.')).length).trim();
+                const bRest = bStr.slice((bNums.join('.')).length).trim();
+                cmp = aRest.localeCompare(bRest);
+            }
+        }
+        else {
+            cmp = aStr.localeCompare(bStr);
+        }
+        return cmp * direction;
+    };
+    jobsArray.sort((a, b) => compareNames(a.name || '', b.name || ''));
     return { jobs: jobsArray };
 }
 function filterUniqueJobs(jobs) {
@@ -26065,7 +26115,8 @@ async function main() {
         const buildOptions = JSON.parse(fs.readFileSync(buildOptionsPath, 'utf-8'));
         const groupBy = core.getInput('group-by');
         const jobNamePrefix = core.getInput('job-name-prefix');
-        const jobs = (0, generate_job_matrix_1.generateJobsMatrix)(buildOptions, groupBy, jobNamePrefix);
+        const sortBy = core.getInput('sort-by');
+        const jobs = (0, generate_job_matrix_1.generateJobsMatrix)(buildOptions, groupBy, jobNamePrefix, sortBy);
         core.info(JSON.stringify(jobs, null, 2));
         core.setOutput('jobs', JSON.stringify(jobs));
     }

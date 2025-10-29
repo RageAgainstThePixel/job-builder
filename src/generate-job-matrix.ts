@@ -5,7 +5,7 @@ import {
     JobMatrix,
 } from './types';
 
-export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string | undefined, jobNamePrefix: string | undefined): JobMatrix {
+export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string | undefined, jobNamePrefix: string | undefined, sortBy?: string): JobMatrix {
     const rootProperties: string[] = getRootProperties(buildOptions);
     const groupByKey: string | undefined = groupBy || rootProperties[0] || undefined;
     const exclude: Array<Record<string, string>> = getArrayOrEmpty(buildOptions.exclude);
@@ -305,14 +305,61 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
         appendedGroups.add(group);
     }
 
-    // Sort job groups by their name in descending order before returning
-    jobsArray.sort((a, b) => {
-        const nameA = a.name || '';
-        const nameB = b.name || '';
-        if (nameA < nameB) { return 1; }
-        if (nameA > nameB) { return -1; }
-        return 0;
-    });
+    // Sort job groups by their name. Support semantic version ordering and
+    // optionally omit the `jobNamePrefix` when comparing (e.g. "Build 2022").
+    // `sortBy` controls ascending/descending. Accept common synonyms ('asc','ascending','desc','descending').
+    // Default is ascending.
+    const sb = sortBy ? String(sortBy).toLowerCase() : '';
+    const direction = (sb === 'desc' || sb === 'descending') ? -1 : 1;
+
+    const stripPrefix = (name: string, prefix?: string) => {
+        if (!prefix || !name) { return name; }
+        const pref = prefix.trim();
+        if (pref.length === 0) { return name; }
+        if (name.startsWith(pref + ' ')) { return name.slice(pref.length + 1).trim(); }
+        if (name.startsWith(pref)) { return name.slice(pref.length).trim(); }
+        return name;
+    };
+
+    const parseLeadingNumbers = (s: string): number[] | null => {
+        if (!s) { return null; }
+        // match a leading numeric version like 2022, 2022.3, 5.6.7
+        const m = s.trim().match(/^([0-9]+(?:\.[0-9]+)*)/);
+        if (!m) { return null; }
+        return m[1].split('.').map(x => parseInt(x, 10));
+    };
+
+    const compareNames = (aName: string, bName: string) => {
+        const aStr = stripPrefix(aName || '', jobNamePrefix || undefined);
+        const bStr = stripPrefix(bName || '', jobNamePrefix || undefined);
+
+        // Try semantic numeric compare based on leading numeric tokens
+        const aNums = parseLeadingNumbers(aStr);
+        const bNums = parseLeadingNumbers(bStr);
+
+        let cmp = 0;
+        if (aNums && bNums) {
+            const len = Math.max(aNums.length, bNums.length);
+            for (let i = 0; i < len; i++) {
+                const av = aNums[i] ?? 0;
+                const bv = bNums[i] ?? 0;
+                if (av < bv) { cmp = -1; break; }
+                if (av > bv) { cmp = 1; break; }
+            }
+            if (cmp === 0) {
+                // If numeric parts equal, compare the rest of the string
+                const aRest = aStr.slice((aNums.join('.')).length).trim();
+                const bRest = bStr.slice((bNums.join('.')).length).trim();
+                cmp = aRest.localeCompare(bRest);
+            }
+        } else {
+            cmp = aStr.localeCompare(bStr);
+        }
+
+        return cmp * direction;
+    };
+
+    jobsArray.sort((a, b) => compareNames(a.name || '', b.name || ''));
 
     return { jobs: jobsArray };
 }

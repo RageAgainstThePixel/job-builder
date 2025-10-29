@@ -1,0 +1,246 @@
+{
+  "jobs": [
+    {
+      "name": "Build 6000.2",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "unity-version": "6000.2",
+            "name": "ubuntu-latest"
+          },
+          {
+            "os": "windows-latest",
+            "unity-version": "6000.2",
+            "name": "windows-latest"
+          },
+          {
+            "os": "macos-latest",
+            "unity-version": "6000.2",
+            "name": "macos-latest"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 6000.1",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "unity-version": "6000.1",
+            "name": "ubuntu-latest"
+          },
+          {
+            "os": "windows-latest",
+            "unity-version": "6000.1",
+            "name": "windows-latest"
+          },
+          {
+            "os": "macos-latest",
+            "unity-version": "6000.1",
+            "name": "macos-latest"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 6000.0",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "unity-version": "6000.0",
+            "name": "ubuntu-latest"
+          },
+          {
+            "os": "windows-latest",
+            "unity-version": "6000.0",
+            "name": "windows-latest"
+          },
+          {
+            "os": "macos-latest",
+            "unity-version": "6000.0",
+            "name": "macos-latest"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 2022",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "unity-version": "2022",
+            "name": "ubuntu-latest"
+          },
+          {
+            "os": "windows-latest",
+            "unity-version": "2022",
+            "name": "windows-latest"
+          },
+          {
+            "os": "macos-latest",
+            "unity-version": "2022",
+            "name": "macos-latest"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 2021",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "unity-version": "2021",
+            "name": "ubuntu-latest"
+          },
+          {
+            "os": "windows-latest",
+            "unity-version": "2021",
+            "name": "windows-latest"
+          },
+          {
+            "os": "macos-latest",
+            "unity-version": "2021",
+            "name": "macos-latest"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 2020",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "unity-version": "2020",
+            "name": "ubuntu-latest"
+          },
+          {
+            "os": "windows-latest",
+            "unity-version": "2020",
+            "name": "windows-latest"
+          },
+          {
+            "os": "macos-latest",
+            "unity-version": "2020",
+            "name": "macos-latest"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 2019",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "unity-version": "2019",
+            "name": "ubuntu-latest"
+          },
+          {
+            "os": "windows-latest",
+            "unity-version": "2019",
+            "name": "windows-latest"
+          },
+          {
+            "os": "macos-latest",
+            "unity-version": "2019",
+            "name": "macos-latest"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 2018",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "unity-version": "2018",
+            "name": "ubuntu-latest"
+          },
+          {
+            "os": "windows-latest",
+            "unity-version": "2018",
+            "name": "windows-latest"
+          },
+          {
+            "os": "macos-latest",
+            "unity-version": "2018",
+            "name": "macos-latest"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 2017",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "unity-version": "2017",
+            "name": "ubuntu-latest"
+          },
+          {
+            "os": "windows-latest",
+            "unity-version": "2017",
+            "name": "windows-latest"
+          },
+          {
+            "os": "macos-latest",
+            "unity-version": "2017",
+            "name": "macos-latest"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 5.6.7f1 (e80cc3114ac1)",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "unity-version": "5.6.7f1 (e80cc3114ac1)",
+            "name": "ubuntu-latest"
+          },
+          {
+            "os": "windows-latest",
+            "unity-version": "5.6.7f1 (e80cc3114ac1)",
+            "name": "windows-latest"
+          },
+          {
+            "os": "macos-latest",
+            "unity-version": "5.6.7f1 (e80cc3114ac1)",
+            "name": "macos-latest"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Build 4.7.2",
+      "matrix": {
+        "include": [
+          {
+            "os": "ubuntu-latest",
+            "unity-version": "4.7.2",
+            "name": "ubuntu-latest"
+          },
+          {
+            "os": "windows-latest",
+            "unity-version": "4.7.2",
+            "name": "windows-latest"
+          },
+          {
+            "os": "macos-latest",
+            "unity-version": "4.7.2",
+            "name": "macos-latest"
+          }
+        ]
+      }
+    }
+  ]
+}
