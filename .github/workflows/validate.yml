@@ -27,8 +27,8 @@ jobs:
         uses: ./ # RageAgainstThePixel/job-builder
         with:
           build-options: ./.github/workflows/build-options.json
-          group-by: 'unity-version' # Optional, defaults to the first property in the build options object
-          job-name-prefix: 'Build' # Optional, defaults to empty string
+          group-by: unity-version # Optional, defaults to the first property in the build options object
+          job-name-prefix: Build # Optional, defaults to empty string
       - name: Verify Job Output was generated
         run: |
           output=$(echo '${{ steps.setup-jobs.outputs.jobs }}' | jq -r '. | length')

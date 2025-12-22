@@ -27,9 +27,9 @@ jobs:
       - uses: RageAgainstThePixel/job-builder@v2
         id: job-builder
         with:
-          build-options: 'path/to/build-options.json'
-          group-by: 'os' # Optional, defaults to the first property in the build options object
-        job-name-prefix: 'Build' # Optional, defaults to empty string
+          build-options: path/to/build-options.json
+          group-by: os # Optional, defaults to the first property in the build options object
+        job-name-prefix: Build # Optional, defaults to empty string
     outputs:
       jobs: ${{ steps.job-builder.outputs.jobs }}
   build:
