@@ -116,9 +116,13 @@ export function generateJobsMatrix(buildOptions: BuildOptions, groupBy: string |
 
             let jobName: string | undefined = typeof candidate.name === 'string' ? candidate.name : undefined;
             if (!jobName) {
-                const baseName = rootProperties
-                    .filter(p => (groupByKey !== undefined && p !== groupByKey) && values[p].length > 1)
-                    .map(p => combination[p])
+                const baseParts = rootProperties
+                    .filter(p => p !== groupByKey)
+                    .filter(p => values[p].length > 1 || (rule && Object.prototype.hasOwnProperty.call(rule, p)));
+
+                const baseName = baseParts
+                    .map(p => candidate[p])
+                    .filter(v => typeof v === 'string' && v.trim().length > 0)
                     .join(' ');
 
                 jobName = baseName;
