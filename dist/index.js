@@ -25736,10 +25736,46 @@ function generateJobsMatrix(buildOptions, groupBy, jobNamePrefix, sortBy) {
             }
             let jobName = typeof candidate.name === 'string' ? candidate.name : undefined;
             if (!jobName) {
-                const baseParts = rootProperties
-                    .filter(p => p !== groupByKey)
-                    .filter(p => values[p].length > 1 || (rule && Object.prototype.hasOwnProperty.call(rule, p)));
-                const baseName = baseParts
+                const basePartKeys = [];
+                const seenKeys = new Set();
+                const considerKey = (k) => {
+                    if (!k || k === groupByKey || k === 'name') {
+                        return;
+                    }
+                    if (seenKeys.has(k)) {
+                        return;
+                    }
+                    const v = candidate[k];
+                    if (!hasValidCharacters(String(v || ''))) {
+                        return;
+                    }
+                    seenKeys.add(k);
+                    basePartKeys.push(k);
+                };
+                for (const p of rootProperties) {
+                    if (p === groupByKey) {
+                        continue;
+                    }
+                    if (values[p].length > 1 || (rule && Object.prototype.hasOwnProperty.call(rule, p))) {
+                        considerKey(p);
+                    }
+                }
+                if (rule && typeof rule === 'object') {
+                    for (const k of Object.keys(rule)) {
+                        considerKey(k);
+                    }
+                }
+                else {
+                    for (const k of Object.keys(candidate)) {
+                        considerKey(k);
+                    }
+                }
+                const osIndex = basePartKeys.indexOf('os');
+                if (osIndex > 0) {
+                    basePartKeys.splice(osIndex, 1);
+                    basePartKeys.unshift('os');
+                }
+                const baseName = basePartKeys
                     .map(p => candidate[p])
                     .filter(v => typeof v === 'string' && v.trim().length > 0)
                     .join(' ');
