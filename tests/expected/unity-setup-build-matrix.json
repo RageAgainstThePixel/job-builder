@@ -10,35 +10,35 @@
             "unity-version": "None"
           },
           {
-            "name": "2020.3",
+            "name": "2020.3 StandaloneLinux64, Android, iOS linux-server",
             "os": "ubuntu-latest",
             "unity-version": "2020.3",
             "build-targets": "StandaloneLinux64, Android, iOS",
             "modules": "linux-server"
           },
           {
-            "name": "2021.3.x",
+            "name": "2021.3.x StandaloneLinux64, Android, iOS linux-server",
             "os": "ubuntu-latest",
             "unity-version": "2021.3.x",
             "build-targets": "StandaloneLinux64, Android, iOS",
             "modules": "linux-server"
           },
           {
-            "name": "2022.x",
+            "name": "2022.x StandaloneLinux64, Android, iOS linux-server",
             "os": "ubuntu-latest",
             "unity-version": "2022.x",
             "build-targets": "StandaloneLinux64, Android, iOS",
             "modules": "linux-server"
           },
           {
-            "name": "6000.0.x",
+            "name": "6000.0.x StandaloneLinux64, Android, iOS linux-server",
             "os": "ubuntu-latest",
             "unity-version": "6000.0.x",
             "build-targets": "StandaloneLinux64, Android, iOS",
             "modules": "linux-server"
           },
           {
-            "name": "6000",
+            "name": "6000 StandaloneLinux64, Android, iOS linux-server",
             "os": "ubuntu-latest",
             "unity-version": "6000",
             "build-targets": "StandaloneLinux64, Android, iOS",
@@ -57,49 +57,49 @@
             "unity-version": "None"
           },
           {
-            "name": "4.7.2",
+            "name": "4.7.2 StandaloneWindows64, Android, WSAPlayer windows-server",
             "os": "windows-latest",
             "unity-version": "4.7.2",
             "build-targets": "StandaloneWindows64, Android, WSAPlayer",
             "modules": "windows-server"
           },
           {
-            "name": "5.6.7f1 (e80cc3114ac1)",
+            "name": "5.6.7f1 (e80cc3114ac1) StandaloneWindows64, Android, WSAPlayer windows-server",
             "os": "windows-latest",
             "unity-version": "5.6.7f1 (e80cc3114ac1)",
             "build-targets": "StandaloneWindows64, Android, WSAPlayer",
             "modules": "windows-server"
           },
           {
-            "name": "2020.3",
+            "name": "2020.3 StandaloneWindows64, Android, WSAPlayer windows-server",
             "os": "windows-latest",
             "unity-version": "2020.3",
             "build-targets": "StandaloneWindows64, Android, WSAPlayer",
             "modules": "windows-server"
           },
           {
-            "name": "2021.3.x",
+            "name": "2021.3.x StandaloneWindows64, Android, WSAPlayer windows-server",
             "os": "windows-latest",
             "unity-version": "2021.3.x",
             "build-targets": "StandaloneWindows64, Android, WSAPlayer",
             "modules": "windows-server"
           },
           {
-            "name": "2022.x",
+            "name": "2022.x StandaloneWindows64, Android, WSAPlayer windows-server",
             "os": "windows-latest",
             "unity-version": "2022.x",
             "build-targets": "StandaloneWindows64, Android, WSAPlayer",
             "modules": "windows-server"
           },
           {
-            "name": "6000.0.x",
+            "name": "6000.0.x StandaloneWindows64, Android, WSAPlayer windows-server",
             "os": "windows-latest",
             "unity-version": "6000.0.x",
             "build-targets": "StandaloneWindows64, Android, WSAPlayer",
             "modules": "windows-server"
           },
           {
-            "name": "6000",
+            "name": "6000 StandaloneWindows64, Android, WSAPlayer windows-server",
             "os": "windows-latest",
             "unity-version": "6000",
             "build-targets": "StandaloneWindows64, Android, WSAPlayer",
@@ -118,49 +118,49 @@
             "unity-version": "None"
           },
           {
-            "name": "4.7.2",
+            "name": "4.7.2 StandaloneOSX Android iOS VisionOS mac-server",
             "os": "macos-latest",
             "unity-version": "4.7.2",
             "build-targets": "StandaloneOSX Android iOS VisionOS",
             "modules": "mac-server"
           },
           {
-            "name": "5.6.7f1 (e80cc3114ac1)",
+            "name": "5.6.7f1 (e80cc3114ac1) StandaloneOSX Android iOS VisionOS mac-server",
             "os": "macos-latest",
             "unity-version": "5.6.7f1 (e80cc3114ac1)",
             "build-targets": "StandaloneOSX Android iOS VisionOS",
             "modules": "mac-server"
           },
           {
-            "name": "2020.3",
+            "name": "2020.3 StandaloneOSX Android iOS VisionOS mac-server",
             "os": "macos-latest",
             "unity-version": "2020.3",
             "build-targets": "StandaloneOSX Android iOS VisionOS",
             "modules": "mac-server"
           },
           {
-            "name": "2021.3.x",
+            "name": "2021.3.x StandaloneOSX Android iOS VisionOS mac-server",
             "os": "macos-latest",
             "unity-version": "2021.3.x",
             "build-targets": "StandaloneOSX Android iOS VisionOS",
             "modules": "mac-server"
           },
           {
-            "name": "2022.x",
+            "name": "2022.x StandaloneOSX Android iOS VisionOS mac-server",
             "os": "macos-latest",
             "unity-version": "2022.x",
             "build-targets": "StandaloneOSX Android iOS VisionOS",
             "modules": "mac-server"
           },
           {
-            "name": "6000.0.x",
+            "name": "6000.0.x StandaloneOSX Android iOS VisionOS mac-server",
             "os": "macos-latest",
             "unity-version": "6000.0.x",
             "build-targets": "StandaloneOSX Android iOS VisionOS",
             "modules": "mac-server"
           },
           {
-            "name": "6000",
+            "name": "6000 StandaloneOSX Android iOS VisionOS mac-server",
             "os": "macos-latest",
             "unity-version": "6000",
             "build-targets": "StandaloneOSX Android iOS VisionOS",

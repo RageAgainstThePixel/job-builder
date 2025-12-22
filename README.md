@@ -22,12 +22,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          sparse-checkout: |
-            path/to/build-options.json
+          sparse-checkout: .github/
       - uses: RageAgainstThePixel/job-builder@v2
         id: job-builder
         with:
-          build-options: path/to/build-options.json
+          build-options: ./.github/workflows/build-options.json
           group-by: os # Optional, defaults to the first property in the build options object
         job-name-prefix: Build # Optional, defaults to empty string
     outputs:
@@ -59,7 +58,7 @@ jobs:
 #### build options json output example
 
 > [!NOTE]
-> Each job name is generated from that job’s property values minus the group-by property. Properties with a single value are omitted _unless_ they were explicitly set in an `include` rule (those stay in the name). If provided, `job-name-prefix` is prepended to each group name.
+> Each job name is generated from that job’s property values minus the group-by property. Properties that are single-valued across all jobs are omitted _unless_ they come from an `include` entry (include-defined fields like `build-target` stay). The `os` value is kept first when present. If provided, `job-name-prefix` is prepended to each group name.
 
 ```json
 {
