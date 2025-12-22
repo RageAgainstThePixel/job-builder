@@ -13,20 +13,18 @@ A GitHub action to setup job matrixes for complex job workflows.
 name: Build Jobs
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 jobs:
   setup:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@v6
         with:
           sparse-checkout: |
             path/to/build-options.json
-      - uses: RageAgainstThePixel/job-builder@v1
+      - uses: RageAgainstThePixel/job-builder@v2
         id: job-builder
         with:
           build-options: 'path/to/build-options.json'
@@ -59,6 +57,9 @@ jobs:
 - `jobs`: The JSON string of the job matrix.
 
 #### build options json output example
+
+> [!NOTE]
+> Each job name is generated from that job’s property values minus the group-by property. Properties with a single value are omitted _unless_ they were explicitly set in an `include` rule (those stay in the name). If provided, `job-name-prefix` is prepended to each group name.
 
 ```json
 {
