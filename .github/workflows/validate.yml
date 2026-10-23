@@ -19,8 +19,7 @@ jobs:
       - name: Action Validation
         shell: bash
         run: |
-          npm install
-          npm run build
+          npm ci
           npm run tests
       - name: Setup Jobs
         id: setup-jobs
