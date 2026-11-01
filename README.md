@@ -21,8 +21,10 @@ on:
 jobs:
   setup:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           sparse-checkout: |
             path/to/build-options.json
@@ -31,7 +33,8 @@ jobs:
         with:
           build-options: 'path/to/build-options.json'
           group-by: 'os' # Optional, defaults to the first property in the build options object
-        job-name-prefix: 'Build' # Optional, defaults to empty string
+          sort-by: 'ascending' # Optional, defaults to ascending
+          job-name-prefix: 'Build' # Optional, defaults to empty string
     outputs:
       jobs: ${{ steps.job-builder.outputs.jobs }}
   build:
@@ -51,8 +54,8 @@ jobs:
 | ---- | ----------- | -------- |
 | `build-options` | The path to the build options JSON file. | true |
 | `group-by` | The property to group jobs by. Defaults to the first property in the build options object. | false |
-| `job-name-prefix` | The prefix to use for job names. Defaults to empty string. | false |
 | `sort-by` | The order to sort job groups by name. Accepts `asc`, `ascending`, `desc`, `descending`. Defaults to `ascending`. | false |
+| `job-name-prefix` | The prefix to use for job names. Defaults to empty string. | false |
 
 ### outputs
 
