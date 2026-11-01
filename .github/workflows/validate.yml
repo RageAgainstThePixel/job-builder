@@ -10,17 +10,21 @@ concurrency:
   cancel-in-progress: true
 jobs:
   setup:
-    if: github.event.pull_request.draft == false
+    if: github.event.pull_request.draft != true
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v6
-      - name: Action Validation
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
         shell: bash
-        run: |
-          npm ci
-          npm run tests
+      - run: npm run tests
+        shell: bash
       - name: Setup Jobs
         id: setup-jobs
         uses: ./ # RageAgainstThePixel/job-builder
@@ -29,8 +33,10 @@ jobs:
           group-by: 'unity-version' # Optional, defaults to the first property in the build options object
           job-name-prefix: 'Build' # Optional, defaults to empty string
       - name: Verify Job Output was generated
+        env:
+          JOBS: ${{ steps.setup-jobs.outputs.jobs }}
         run: |
-          output=$(echo '${{ steps.setup-jobs.outputs.jobs }}' | jq -r '. | length')
+          output=$(echo "${JOBS}" | jq -r '. | length')
           if [ -z "$output" ] || [ "$output" -eq 0 ]; then
             echo "No jobs were generated. Please check your build options.";
             exit 1;
